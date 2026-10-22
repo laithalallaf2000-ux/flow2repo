@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onboarding</title>
+<style>
+:root { --bg:#f8fafc; --ink:#0f172a; --muted:#64748b; --brand:#2563eb; --line:#e2e8f0; }
+* { box-sizing: border-box; margin: 0; }
+body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--ink); }
+.wizard { max-width: 640px; margin: 0 auto; padding: 48px 20px; display: flex; flex-direction: column; gap: 24px; }
+.steps { display: flex; gap: 10px; list-style: none; padding: 0; }
+.steps__item { flex: 1; padding: 10px; border-radius: 10px; background: #fff; border: 1px solid var(--line); font-size: 13px; color: var(--muted); text-decoration: none; text-align: center; }
+.steps__item.is-current { background: var(--brand); color: #fff; border-color: var(--brand); }
+.card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.card h1 { font-size: 22px; }
+.field { display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+.field input, .field select, .field textarea { padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font: inherit; }
+.choices { display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+.actions { display: flex; justify-content: space-between; }
+.btn { padding: 10px 18px; border-radius: 8px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-size: 14px; }
+.btn--primary { background: var(--brand); color: #fff; border-color: var(--brand); }
+.hint { color: var(--muted); font-size: 13px; }
+</style>
+<style data-f2r="preview">
+body { background: #cbd5e1; }
+[data-f2r="canvas"] { display: grid; grid-template-columns: repeat(3, 720px); gap: 60px; padding: 60px; }
+[data-screen] { width: 720px; min-height: 760px; background: var(--bg); }
+</style>
+</head>
+<body>
+<div data-f2r="canvas">
+
+<section data-screen="account" data-title="Account" data-home>
+  <div class="wizard">
+    <ol class="steps" data-component="Steps">
+      <li><a class="steps__item is-current" href="#account" data-goto="account">1. Account</a></li>
+      <li><a class="steps__item" href="#preferences" data-goto="preferences">2. Preferences</a></li>
+      <li><a class="steps__item" href="#review" data-goto="review">3. Review</a></li>
+    </ol>
+    <form class="card" id="account-form">
+      <h1>Create your account</h1>
+      <label class="field">Full name<input name="fullName" autocomplete="name" required placeholder="Ada Lovelace"></label>
+      <label class="field">Work email<input name="email" type="email" required placeholder="ada@company.com"></label>
+      <label class="field">Password<input name="password" type="password" minlength="8" required></label>
+      <label class="field">Country
+        <select name="country"><option value="">Choose…</option><option value="jo">Jordan</option><option value="de" selected>Germany</option><option value="us">United States</option></select>
+      </label>
+      <label class="choices"><span><input type="checkbox" name="terms" required> I agree to the terms</span></label>
+      <div class="actions"><span class="hint">Step 1 of 3</span><button class="btn btn--primary" type="submit" data-goto="preferences">Continue</button></div>
+    </form>
+  </div>
+</section>
+
+<section data-screen="preferences" data-title="Preferences">
+  <div class="wizard">
+    <ol class="steps" data-component="Steps">
+      <li><a class="steps__item" href="#account" data-goto="account">1. Account</a></li>
+      <li><a class="steps__item is-current" href="#preferences" data-goto="preferences">2. Preferences</a></li>
+      <li><a class="steps__item" href="#review" data-goto="review">3. Review</a></li>
+    </ol>
+    <form class="card" id="preferences-form">
+      <h1>Your preferences</h1>
+      <div class="choices">
+        <strong>Plan</strong>
+        <label><input type="radio" name="plan" value="free" checked> Free</label>
+        <label><input type="radio" name="plan" value="team"> Team</label>
+        <label><input type="radio" name="plan" value="business"> Business</label>
+      </div>
+      <div class="choices">
+        <strong>Notify me about</strong>
+        <label><input type="checkbox" name="topics" value="product" checked> Product updates</label>
+        <label><input type="checkbox" name="topics" value="billing"> Billing</label>
+        <label><input type="checkbox" name="topics" value="events" checked> Events</label>
+      </div>
+      <label class="field">Languages
+        <select name="languages" multiple size="3"><option value="en" selected>English</option><option value="ar">Arabic</option><option value="de">German</option></select>
+      </label>
+      <label class="field">Anything else?<textarea name="comments" rows="3" placeholder="Tell us more"></textarea></label>
+      <div class="actions"><button class="btn" type="button" data-goto="account">Back</button><button class="btn btn--primary" type="submit" data-goto="review">Continue</button></div>
+    </form>
+  </div>
+</section>
+
+<section data-screen="review" data-title="Review">
+  <div class="wizard">
+    <ol class="steps" data-component="Steps">
+      <li><a class="steps__item" href="#account" data-goto="account">1. Account</a></li>
+      <li><a class="steps__item" href="#preferences" data-goto="preferences">2. Preferences</a></li>
+      <li><a class="steps__item is-current" href="#review" data-goto="review">3. Review</a></li>
+    </ol>
+    <div class="card">
+      <h1>All set</h1>
+      <p class="hint">Check your details and finish. You can change everything later in Settings.</p>
+      <div class="actions"><button class="btn" type="button" data-goto="preferences">Back</button><button class="btn btn--primary" type="button" data-goto="account">Finish</button></div>
+    </div>
+  </div>
+</section>
+
+</div>
+</body>
+</html>

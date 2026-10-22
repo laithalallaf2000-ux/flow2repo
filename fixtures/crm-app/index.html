@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cliently CRM</title>
+<style>
+:root { --bg:#f4f6f8; --card:#fff; --ink:#18212f; --muted:#667085; --brand:#0f766e; --line:#e4e7ec; }
+* { box-sizing: border-box; margin: 0; }
+body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--ink); }
+.shell { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+.rail { background: #fff; border-right: 1px solid var(--line); padding: 20px 12px; display: flex; flex-direction: column; gap: 4px; }
+.rail__logo { font-weight: 800; color: var(--brand); padding: 0 10px 16px; font-size: 18px; }
+.rail__link { display: flex; gap: 10px; align-items: center; padding: 9px 10px; border-radius: 8px; color: var(--muted); text-decoration: none; font-size: 14px; }
+.rail__link svg { width: 16px; height: 16px; }
+.rail__link.active { background: #ccfbf1; color: var(--brand); font-weight: 600; }
+.page { padding: 24px 28px; display: flex; flex-direction: column; gap: 18px; }
+.page__head { display: flex; justify-content: space-between; align-items: center; }
+.btn { padding: 8px 14px; border: 1px solid var(--line); border-radius: 8px; background: #fff; cursor: pointer; font-size: 14px; }
+.btn--brand { background: var(--brand); color: #fff; border-color: var(--brand); }
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.contacts { width: 100%; border-collapse: collapse; font-size: 14px; }
+.contacts th { text-align: left; color: var(--muted); padding: 8px; border-bottom: 1px solid var(--line); font-weight: 500; }
+.contacts td { padding: 10px 8px; border-bottom: 1px solid var(--line); }
+.chips { display: flex; gap: 4px; }
+.chip { background: #f0fdfa; color: var(--brand); border-radius: 6px; padding: 2px 8px; font-size: 12px; }
+.pipeline { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.column { background: #eef2f6; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.column__title { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.deal { background: #fff; border-radius: 10px; padding: 12px; border: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; }
+.deal__name { font-weight: 600; font-size: 14px; }
+.deal__amount { color: var(--brand); font-weight: 700; }
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); }
+.tab { padding: 8px 14px; border: 0; background: none; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; }
+.tab.is-active { color: var(--brand); border-color: var(--brand); }
+.tab-panel { padding-top: 14px; font-size: 14px; line-height: 1.6; }
+.faq__item { border-bottom: 1px solid var(--line); padding: 10px 0; }
+.faq__q { display: flex; justify-content: space-between; width: 100%; background: none; border: 0; font-size: 14px; font-weight: 600; cursor: pointer; }
+.faq__a { display: none; color: var(--muted); font-size: 14px; padding-top: 6px; }
+.faq__a.is-open { display: block; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.field { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
+.field input, .field select, .field textarea { padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; font: inherit; color: var(--ink); }
+.field--wide { grid-column: span 2; }
+.radios { display: flex; gap: 14px; font-size: 14px; color: var(--ink); }
+@media (max-width: 800px) { .shell { grid-template-columns: 1fr; } .rail { display: none; } .pipeline { grid-template-columns: 1fr; } }
+</style>
+<style data-f2r="preview">
+body { background: #cfd6dd; }
+[data-f2r="canvas"] { display: grid; grid-template-columns: repeat(3, 1320px); gap: 80px; padding: 80px; }
+[data-screen] { width: 1320px; height: 860px; overflow: hidden; background: var(--bg); }
+</style>
+</head>
+<body>
+<div data-f2r="canvas">
+
+<section data-screen="contacts" data-title="Contacts" data-home>
+  <div class="shell">
+    <nav class="rail" data-component="Rail">
+      <div class="rail__logo">Cliently</div>
+      <a class="rail__link active" href="#contacts" data-goto="contacts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Contacts</a>
+      <a class="rail__link" href="#pipeline" data-goto="pipeline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h18l-7 9v6l-4 2v-8z"/></svg>Pipeline</a>
+      <a class="rail__link" href="#contact-detail" data-goto="contact-detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v14H7l-3 3z"/></svg>Notes</a>
+    </nav>
+    <main class="page">
+      <div class="page__head"><h1>Contacts</h1><button class="btn btn--brand" type="button" data-goto="contact-detail">Add contact</button></div>
+      <div class="panel">
+        <table class="contacts">
+          <thead><tr><th>Name</th><th>Company</th><th>Email</th><th>Tags</th></tr></thead>
+          <tbody>
+            <tr><td>Nadia Karam</td><td>Orbit Labs</td><td>nadia@orbitlabs.io</td><td><div class="chips"><span class="chip">Lead</span><span class="chip">VIP</span><span class="chip">EU</span></div></td></tr>
+            <tr><td>Tomas Berg</td><td>Fjord AS</td><td>tomas@fjord.no</td><td><div class="chips"><span class="chip">Customer</span></div></td></tr>
+            <tr><td>Rina Park</td><td>Haneul Co</td><td>rina@haneul.kr</td><td><div class="chips"><span class="chip">Lead</span><span class="chip">APAC</span></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</section>
+
+<section data-screen="pipeline" data-title="Pipeline">
+  <div class="shell">
+    <nav class="rail" data-component="Rail">
+      <div class="rail__logo">Cliently</div>
+      <a class="rail__link" href="#contacts" data-goto="contacts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Contacts</a>
+      <a class="rail__link active" href="#pipeline" data-goto="pipeline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h18l-7 9v6l-4 2v-8z"/></svg>Pipeline</a>
+      <a class="rail__link" href="#contact-detail" data-goto="contact-detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v14H7l-3 3z"/></svg>Notes</a>
+    </nav>
+    <main class="page">
+      <div class="page__head"><h1>Pipeline</h1></div>
+      <div class="pipeline">
+        <section class="column">
+          <h2 class="column__title">Qualified</h2>
+          <article class="deal"><span class="deal__name">Orbit Labs renewal</span><span class="deal__amount">$12,000</span></article>
+          <article class="deal"><span class="deal__name">Fjord pilot</span><span class="deal__amount">$4,500</span></article>
+          <article class="deal"><span class="deal__name">Haneul rollout</span><span class="deal__amount">$18,900</span></article>
+        </section>
+        <section class="column">
+          <h2 class="column__title">Proposal</h2>
+          <article class="deal"><span class="deal__name">Kestrel upgrade</span><span class="deal__amount">$7,200</span></article>
+        </section>
+        <section class="column">
+          <h2 class="column__title">Won</h2>
+          <article class="deal"><span class="deal__name">Atlas seats</span><span class="deal__amount">$3,100</span></article>
+          <article class="deal"><span class="deal__name">Nimbus add-on</span><span class="deal__amount">$2,250</span></article>
+        </section>
+      </div>
+    </main>
+  </div>
+</section>
+
+<section data-screen="contact-detail" data-title="Contact detail">
+  <div class="shell">
+    <nav class="rail" data-component="Rail">
+      <div class="rail__logo">Cliently</div>
+      <a class="rail__link" href="#contacts" data-goto="contacts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Contacts</a>
+      <a class="rail__link" href="#pipeline" data-goto="pipeline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h18l-7 9v6l-4 2v-8z"/></svg>Pipeline</a>
+      <a class="rail__link active" href="#contact-detail" data-goto="contact-detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v14H7l-3 3z"/></svg>Notes</a>
+    </nav>
+    <main class="page">
+      <div class="page__head"><h1>Nadia Karam</h1><button class="btn" type="button" data-goto="contacts">Back</button></div>
+      <div class="panel">
+        <div class="tabs">
+          <button class="tab is-active" type="button" data-tab-group="detail" data-tab="profile">Profile</button>
+          <button class="tab" type="button" data-tab-group="detail" data-tab="activity">Activity</button>
+        </div>
+        <div class="tab-panel" data-tab-group="detail" data-tab-panel="profile">
+          <form id="contact-form" class="form-grid">
+            <label class="field">Full name<input name="fullName" value="Nadia Karam" required></label>
+            <label class="field">Email<input name="email" type="email" value="nadia@orbitlabs.io" required></label>
+            <label class="field">Stage<select name="stage"><option value="lead">Lead</option><option value="customer" selected>Customer</option><option value="churned">Churned</option></select></label>
+            <div class="field">Contact by
+              <div class="radios">
+                <label><input type="radio" name="channel" value="email" checked> Email</label>
+                <label><input type="radio" name="channel" value="phone"> Phone</label>
+              </div>
+            </div>
+            <div class="field field--wide">Interests
+              <div class="radios">
+                <label><input type="checkbox" name="interests" value="demo" checked> Demo</label>
+                <label><input type="checkbox" name="interests" value="pricing"> Pricing</label>
+                <label><input type="checkbox" name="interests" value="support"> Support</label>
+              </div>
+            </div>
+            <label class="field field--wide">Notes<textarea name="notes" rows="3">Prefers morning calls.</textarea></label>
+            <div class="field--wide"><button class="btn btn--brand" type="submit">Save contact</button></div>
+          </form>
+        </div>
+        <div class="tab-panel" data-tab-group="detail" data-tab-panel="activity" hidden>
+          <div class="faq">
+            <div class="faq__item"><button class="faq__q" type="button" data-toggle="call">Call on Oct 14 <span>+</span></button><p class="faq__a" data-toggle-target="call">Discussed renewal terms and a two-year discount.</p></div>
+            <div class="faq__item"><button class="faq__q" type="button" data-toggle="mail">Email on Oct 9 <span>+</span></button><p class="faq__a" data-toggle-target="mail">Sent the updated proposal and pricing sheet.</p></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</section>
+
+</div>
+</body>
+</html>

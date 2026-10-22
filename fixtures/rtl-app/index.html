@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة المبيعات</title>
+<style>
+:root { --bg:#f7f7fb; --card:#fff; --ink:#1f2340; --muted:#6c7093; --brand:#7c3aed; --line:#e7e8f3; }
+* { box-sizing: border-box; margin: 0; }
+body { font-family: "Segoe UI", Tahoma, sans-serif; background: var(--bg); color: var(--ink); }
+.app { display: flex; min-height: 100vh; }
+.side { width: 220px; background: #fff; border-inline-end: 1px solid var(--line); padding: 20px 12px; display: flex; flex-direction: column; gap: 4px; }
+.side__logo { font-weight: 800; font-size: 18px; color: var(--brand); padding: 0 10px 16px; }
+.side__link { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; color: var(--muted); text-decoration: none; font-size: 14px; }
+.side__link svg { width: 18px; height: 18px; }
+.side__link.is-active { background: #f3e8ff; color: var(--brand); font-weight: 600; }
+.content { flex: 1; padding: 24px 28px; display: flex; flex-direction: column; gap: 18px; }
+.head { display: flex; justify-content: space-between; align-items: center; }
+.btn { padding: 9px 16px; border-radius: 8px; border: 1px solid var(--line); background: #fff; font: inherit; cursor: pointer; }
+.btn--brand { background: var(--brand); color: #fff; border-color: var(--brand); }
+.kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.kpi { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+.kpi__label { color: var(--muted); font-size: 13px; }
+.kpi__value { font-size: 24px; font-weight: 700; }
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.panel h2 { font-size: 16px; margin-bottom: 12px; }
+.grid { width: 100%; border-collapse: collapse; font-size: 14px; }
+.grid th { text-align: start; color: var(--muted); font-weight: 500; padding: 8px; border-bottom: 1px solid var(--line); }
+.grid td { padding: 10px 8px; border-bottom: 1px solid var(--line); }
+.labels { display: flex; gap: 6px; }
+.label { background: #f3e8ff; color: var(--brand); padding: 2px 8px; border-radius: 6px; font-size: 12px; }
+.search { display: flex; gap: 8px; }
+.search input { padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; font: inherit; min-width: 240px; }
+@media (max-width: 800px) { .side { display: none; } .kpis { grid-template-columns: 1fr; } }
+</style>
+<style data-f2r="preview">
+body { background: #d9dbe8; }
+[data-f2r="canvas"] { display: grid; grid-template-columns: repeat(2, 1280px); gap: 80px; padding: 80px; }
+[data-screen] { width: 1280px; height: 820px; overflow: hidden; background: var(--bg); }
+</style>
+</head>
+<body>
+<div data-f2r="canvas">
+
+<section data-screen="overview" data-title="نظرة عامة" data-home dir="rtl">
+  <div class="app">
+    <aside class="side" data-component="SideNav">
+      <div class="side__logo">مبيعاتي</div>
+      <a class="side__link is-active" href="#overview" data-goto="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/></svg>نظرة عامة</a>
+      <a class="side__link" href="#customers" data-goto="customers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>العملاء</a>
+    </aside>
+    <main class="content">
+      <div class="head"><h1>نظرة عامة</h1><button class="btn btn--brand" type="button" data-goto="customers">عرض العملاء</button></div>
+      <div class="kpis">
+        <div class="kpi"><span class="kpi__label">المبيعات</span><span class="kpi__value">٤٨٬٢٩٠ د.أ</span></div>
+        <div class="kpi"><span class="kpi__label">الطلبات</span><span class="kpi__value">١٬٢٨٤</span></div>
+        <div class="kpi"><span class="kpi__label">عملاء جدد</span><span class="kpi__value">٣١٢</span></div>
+      </div>
+      <div class="panel">
+        <h2>أحدث الطلبات</h2>
+        <table class="grid">
+          <thead><tr><th>الطلب</th><th>العميل</th><th>الحالة</th><th>المبلغ</th></tr></thead>
+          <tbody>
+            <tr><td>#١٠٤٨٢</td><td>عمر خليل</td><td>مدفوع</td><td>٢٤٨ د.أ</td></tr>
+            <tr><td>#١٠٤٨١</td><td>لينا منصور</td><td>قيد الانتظار</td><td>٨٩ د.أ</td></tr>
+            <tr><td>#١٠٤٨٠</td><td>كريم ناصر</td><td>مسترجع</td><td>٤١٢ د.أ</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</section>
+
+<section data-screen="customers" data-title="العملاء" dir="rtl">
+  <div class="app">
+    <aside class="side" data-component="SideNav">
+      <div class="side__logo">مبيعاتي</div>
+      <a class="side__link" href="#overview" data-goto="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="8" height="8"/><rect x="13" y="3" width="8" height="8"/><rect x="3" y="13" width="8" height="8"/><rect x="13" y="13" width="8" height="8"/></svg>نظرة عامة</a>
+      <a class="side__link is-active" href="#customers" data-goto="customers"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>العملاء</a>
+    </aside>
+    <main class="content">
+      <div class="head"><h1>العملاء</h1>
+        <form class="search" id="customer-search"><input type="search" name="q" placeholder="ابحث عن عميل"><button class="btn" type="submit">بحث</button></form>
+      </div>
+      <div class="panel">
+        <h2>قائمة العملاء</h2>
+        <table class="grid">
+          <thead><tr><th>الاسم</th><th>المدينة</th><th>الوسوم</th></tr></thead>
+          <tbody>
+            <tr><td>عمر خليل</td><td>عمّان</td><td><div class="labels"><span class="label">مميز</span><span class="label">جملة</span><span class="label">جديد</span></div></td></tr>
+            <tr><td>لينا منصور</td><td>إربد</td><td><div class="labels"><span class="label">مميز</span></div></td></tr>
+            <tr><td>كريم ناصر</td><td>الزرقاء</td><td><div class="labels"><span class="label">جملة</span><span class="label">متأخر</span></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+</section>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pulse Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <style>
+    :root {
+      --bg: #f5f6fa;
+      --surface: #ffffff;
+      --border: #e6e8ef;
+      --text: #1b1f2e;
+      --muted: #6b7185;
+      --primary: #5b5bf0;
+      --primary-soft: #ececfe;
+      --success: #12a454;
+      --success-soft: #e3f6ec;
+      --warning: #c98a04;
+      --warning-soft: #fdf3dc;
+      --danger: #d93a3a;
+      --danger-soft: #fde8e8;
+      --radius: 12px;
+      --shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.08);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Inter", system-ui, sans-serif; color: var(--text); background: var(--bg); font-size: 14px; }
+    a { color: inherit; text-decoration: none; }
+    h1, h2, h3, p { margin: 0; }
+    [data-screen] { min-height: 100vh; background: var(--bg); }
+
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar { width: 248px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border); padding: 24px 16px; display: flex; flex-direction: column; gap: 28px; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; padding: 0 8px; }
+    .brand__logo { width: 32px; height: 32px; border-radius: 9px; background: linear-gradient(135deg, #5b5bf0, #9b6bff); display: grid; place-items: center; color: #fff; }
+    .nav { display: flex; flex-direction: column; gap: 4px; }
+    .nav__label { font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 0 12px 6px; }
+    .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 9px; color: var(--muted); font-weight: 500; }
+    .nav-item:hover { background: var(--bg); color: var(--text); }
+    .nav-item.is-active { background: var(--primary-soft); color: var(--primary); }
+    .nav-item svg { width: 18px; height: 18px; }
+    .sidebar__footer { margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 10px; background: var(--bg); }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+    .sidebar__user { display: flex; flex-direction: column; font-size: 13px; }
+    .sidebar__user span { color: var(--muted); font-size: 12px; }
+
+    .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .topbar { height: 68px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; gap: 16px; }
+    .search { display: flex; align-items: center; gap: 8px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 0 12px; height: 40px; width: 340px; color: var(--muted); }
+    .search input { border: 0; background: transparent; outline: none; font: inherit; flex: 1; color: var(--text); }
+    .topbar__actions { display: flex; align-items: center; gap: 12px; }
+    .icon-btn { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); display: grid; place-items: center; color: var(--muted); cursor: pointer; }
+
+    .content { padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+    .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
+    .page-head h1 { font-size: 24px; font-weight: 700; }
+    .page-head p { color: var(--muted); margin-top: 4px; }
+
+    .btn { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); font: inherit; font-weight: 600; color: var(--text); cursor: pointer; }
+    .btn--primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .btn--block { width: 100%; justify-content: center; height: 44px; }
+
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .card__head { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px; border-bottom: 1px solid var(--border); }
+    .card__head h2 { font-size: 16px; font-weight: 600; }
+    .card__body { padding: 20px; }
+
+    .badge { display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+    .badge--success { background: var(--success-soft); color: var(--success); }
+    .badge--warning { background: var(--warning-soft); color: var(--warning); }
+    .badge--danger { background: var(--danger-soft); color: var(--danger); }
+
+    .table { width: 100%; border-collapse: collapse; }
+    .table th { text-align: left; font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; padding: 12px 20px; background: #fafbfd; border-bottom: 1px solid var(--border); }
+    .table td { padding: 14px 20px; border-bottom: 1px solid var(--border); }
+    .table tr:last-child td { border-bottom: 0; }
+    .person { display: flex; align-items: center; gap: 10px; }
+    .person .avatar { width: 32px; height: 32px; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-weight: 600; font-size: 13px; }
+    .field input, .field select, .field textarea { height: 42px; border: 1px solid var(--border); border-radius: 10px; padding: 0 12px; font: inherit; color: var(--text); background: var(--surface); }
+    .field textarea { height: 96px; padding: 10px 12px; resize: vertical; }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .search { width: auto; flex: 1; }
+      .content { padding: 20px; }
+    }
+  </style>
+  <style data-f2r-screen="login">
+    [data-screen="login"] .auth { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; }
+    [data-screen="login"] .auth__art { background: linear-gradient(150deg, #5b5bf0 0%, #8f5bff 60%, #c77dff 100%); color: #fff; padding: 56px; display: flex; flex-direction: column; justify-content: space-between; }
+    [data-screen="login"] .auth__art h2 { font-size: 34px; line-height: 1.2; max-width: 420px; }
+    [data-screen="login"] .auth__art p { opacity: .85; max-width: 400px; margin-top: 16px; line-height: 1.6; }
+    [data-screen="login"] .auth__form { display: grid; place-items: center; padding: 40px; background: var(--surface); }
+    [data-screen="login"] .auth__box { width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 18px; }
+    [data-screen="login"] .auth__box h1 { font-size: 26px; }
+    [data-screen="login"] .auth__row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+    [data-screen="login"] .auth__row a { color: var(--primary); font-weight: 600; }
+    @media (max-width: 900px) { [data-screen="login"] .auth { grid-template-columns: 1fr; } [data-screen="login"] .auth__art { display: none; } }
+  </style>
+  <style data-f2r-screen="dashboard">
+    [data-screen="dashboard"] .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    [data-screen="dashboard"] .stat { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+    [data-screen="dashboard"] .stat__label { color: var(--muted); font-weight: 500; }
+    [data-screen="dashboard"] .stat__value { font-size: 26px; font-weight: 700; }
+    [data-screen="dashboard"] .stat__trend { font-size: 12px; font-weight: 600; color: var(--success); }
+    [data-screen="dashboard"] .stat__trend--down { color: var(--danger); }
+    [data-screen="dashboard"] .grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+    [data-screen="dashboard"] .bars { display: flex; align-items: flex-end; gap: 14px; height: 220px; padding-top: 10px; }
+    [data-screen="dashboard"] .bars__col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; justify-content: flex-end; color: var(--muted); font-size: 12px; }
+    [data-screen="dashboard"] .bars__bar { width: 100%; border-radius: 8px 8px 4px 4px; background: linear-gradient(180deg, #8b8bf7, #5b5bf0); }
+    [data-screen="dashboard"] .goal { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+    [data-screen="dashboard"] .goal__top { display: flex; justify-content: space-between; font-weight: 500; }
+    [data-screen="dashboard"] .progress { height: 8px; border-radius: 999px; background: var(--bg); overflow: hidden; }
+    [data-screen="dashboard"] .progress span { display: block; height: 100%; background: var(--primary); border-radius: inherit; }
+    @media (max-width: 1100px) { [data-screen="dashboard"] .stats { grid-template-columns: repeat(2, 1fr); } [data-screen="dashboard"] .grid-2 { grid-template-columns: 1fr; } }
+  </style>
+  <style data-f2r-screen="orders">
+    [data-screen="orders"] .filters { display: flex; gap: 8px; }
+    [data-screen="orders"] .chip { height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); font: inherit; font-weight: 500; color: var(--muted); cursor: pointer; }
+    [data-screen="orders"] .chip--on { background: var(--text); color: #fff; border-color: var(--text); }
+    [data-screen="orders"] .amount { font-weight: 600; }
+  </style>
+  <style data-f2r-screen="order-details">
+    [data-screen="order-details"] .grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: start; }
+    [data-screen="order-details"] .line { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+    [data-screen="order-details"] .line:last-child { border-bottom: 0; }
+    [data-screen="order-details"] .line img { width: 56px; height: 56px; border-radius: 10px; object-fit: cover; }
+    [data-screen="order-details"] .line__info { flex: 1; }
+    [data-screen="order-details"] .line__info span { color: var(--muted); font-size: 13px; }
+    [data-screen="order-details"] .summary-row { display: flex; justify-content: space-between; padding: 8px 0; color: var(--muted); }
+    [data-screen="order-details"] .summary-row--total { color: var(--text); font-weight: 700; font-size: 16px; border-top: 1px solid var(--border); margin-top: 8px; padding-top: 14px; }
+    [data-screen="order-details"] .back { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-weight: 500; background: none; border: 0; font: inherit; cursor: pointer; padding: 0; }
+    @media (max-width: 1100px) { [data-screen="order-details"] .grid-2 { grid-template-columns: 1fr; } }
+  </style>
+  <style data-f2r-screen="settings">
+    [data-screen="settings"] .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    [data-screen="settings"] .form-grid .field--full { grid-column: 1 / -1; }
+    [data-screen="settings"] .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border); }
+    [data-screen="settings"] .toggle-row:last-child { border-bottom: 0; }
+    [data-screen="settings"] .toggle-row span { color: var(--muted); font-size: 13px; display: block; margin-top: 2px; }
+    [data-screen="settings"] .actions { display: flex; justify-content: flex-end; gap: 10px; }
+  </style>
+  <style data-f2r="preview">
+    body { background: #dfe2ea; padding: 56px; }
+    [data-f2r="canvas"] { display: grid; grid-template-columns: repeat(2, 1440px); gap: 56px; }
+    [data-screen] { width: 1440px; min-height: 900px; overflow: hidden; border-radius: 14px; box-shadow: 0 30px 80px rgba(20, 24, 40, .18); }
+  </style>
+</head>
+<body>
+  <div data-f2r="canvas">
+
+    <section data-screen="login" data-title="Login">
+      <div class="auth">
+        <div class="auth__art">
+          <div class="brand"><span class="brand__logo">P</span> Pulse</div>
+          <div>
+            <h2>Every order, customer and metric in one calm place.</h2>
+            <p>Pulse helps small commerce teams see what is happening today and act on it before tomorrow.</p>
+          </div>
+          <p>© 2026 Pulse Labs</p>
+        </div>
+        <div class="auth__form">
+          <form class="auth__box">
+            <div>
+              <h1>Welcome back</h1>
+              <p style="color: var(--muted); margin-top: 6px">Sign in to your workspace.</p>
+            </div>
+            <div class="field">
+              <label for="login-email">Email</label>
+              <input id="login-email" type="email" placeholder="you@company.com" value="sara@pulselabs.io">
+            </div>
+            <div class="field">
+              <label for="login-password">Password</label>
+              <input id="login-password" type="password" placeholder="••••••••">
+            </div>
+            <div class="auth__row">
+              <label><input type="checkbox" checked> Remember me</label>
+              <a href="#">Forgot password?</a>
+            </div>
+            <button class="btn btn--primary btn--block" type="button" data-goto="dashboard">Sign in</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section data-screen="dashboard" data-title="Dashboard" data-home>
+      <div class="layout">
+        <aside class="sidebar" data-component="Sidebar">
+          <div class="brand"><span class="brand__logo">P</span> Pulse</div>
+          <nav class="nav">
+            <span class="nav__label">Menu</span>
+            <a class="nav-item is-active" href="#dashboard" data-goto="dashboard">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+              Dashboard
+            </a>
+            <a class="nav-item" href="#orders" data-goto="orders">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              Orders
+            </a>
+            <a class="nav-item" href="#settings" data-goto="settings">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+              Settings
+            </a>
+          </nav>
+          <div class="sidebar__footer">
+            <img class="avatar" src="https://i.pravatar.cc/80?img=47" alt="Sara Haddad">
+            <div class="sidebar__user"><strong>Sara Haddad</strong><span>Store owner</span></div>
+          </div>
+        </aside>
+        <div class="main">
+          <header class="topbar" data-component="Topbar">
+            <label class="search">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              <input type="search" placeholder="Search orders, customers…" aria-label="Search">
+            </label>
+            <div class="topbar__actions">
+              <button class="icon-btn" type="button" aria-label="Notifications">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+              </button>
+              <button class="btn" type="button" data-goto="login">Sign out</button>
+            </div>
+          </header>
+          <main class="content">
+            <div class="page-head">
+              <div>
+                <h1>Good morning, Sara</h1>
+                <p>Here is what happened in your store this week.</p>
+              </div>
+              <button class="btn btn--primary" type="button" data-goto="orders">View all orders</button>
+            </div>
+            <div class="stats">
+              <div class="card stat"><span class="stat__label">Revenue</span><span class="stat__value">$48,290</span><span class="stat__trend">▲ 12.4% vs last week</span></div>
+              <div class="card stat"><span class="stat__label">Orders</span><span class="stat__value">1,284</span><span class="stat__trend">▲ 8.1% vs last week</span></div>
+              <div class="card stat"><span class="stat__label">New customers</span><span class="stat__value">312</span><span class="stat__trend">▲ 3.2% vs last week</span></div>
+              <div class="card stat"><span class="stat__label">Refunds</span><span class="stat__value">$1,120</span><span class="stat__trend stat__trend--down">▼ 1.9% vs last week</span></div>
+            </div>
+            <div class="grid-2">
+              <div class="card">
+                <div class="card__head"><h2>Weekly revenue</h2><span class="badge badge--success">+12.4%</span></div>
+                <div class="card__body">
+                  <div class="bars">
+                    <div class="bars__col"><div class="bars__bar" style="height: 46%"></div>Mon</div>
+                    <div class="bars__col"><div class="bars__bar" style="height: 62%"></div>Tue</div>
+                    <div class="bars__col"><div class="bars__bar" style="height: 54%"></div>Wed</div>
+                    <div class="bars__col"><div class="bars__bar" style="height: 78%"></div>Thu</div>
+                    <div class="bars__col"><div class="bars__bar" style="height: 92%"></div>Fri</div>
+                    <div class="bars__col"><div class="bars__bar" style="height: 70%"></div>Sat</div>
+                    <div class="bars__col"><div class="bars__bar" style="height: 40%"></div>Sun</div>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card__head"><h2>Monthly goals</h2></div>
+                <div class="card__body">
+                  <div class="goal"><div class="goal__top"><span>Revenue</span><span>78%</span></div><div class="progress"><span style="width: 78%"></span></div></div>
+                  <div class="goal"><div class="goal__top"><span>New customers</span><span>52%</span></div><div class="progress"><span style="width: 52%"></span></div></div>
+                  <div class="goal"><div class="goal__top"><span>Repeat orders</span><span>91%</span></div><div class="progress"><span style="width: 91%"></span></div></div>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </section>
+
+    <section data-screen="orders" data-title="Orders">
+      <div class="layout">
+        <aside class="sidebar" data-component="Sidebar">
+          <div class="brand"><span class="brand__logo">P</span> Pulse</div>
+          <nav class="nav">
+            <span class="nav__label">Menu</span>
+            <a class="nav-item" href="#dashboard" data-goto="dashboard">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+              Dashboard
+            </a>
+            <a class="nav-item is-active" href="#orders" data-goto="orders">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              Orders
+            </a>
+            <a class="nav-item" href="#settings" data-goto="settings">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+              Settings
+            </a>
+          </nav>
+          <div class="sidebar__footer">
+            <img class="avatar" src="https://i.pravatar.cc/80?img=47" alt="Sara Haddad">
+            <div class="sidebar__user"><strong>Sara Haddad</strong><span>Store owner</span></div>
+          </div>
+        </aside>
+        <div class="main">
+          <header class="topbar" data-component="Topbar">
+            <label class="search">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              <input type="search" placeholder="Search orders, customers…" aria-label="Search">
+            </label>
+            <div class="topbar__actions">
+              <button class="icon-btn" type="button" aria-label="Notifications">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+              </button>
+              <button class="btn" type="button" data-goto="login">Sign out</button>
+            </div>
+          </header>
+          <main class="content">
+            <div class="page-head">
+              <div>
+                <h1>Orders</h1>
+                <p>1,284 orders this week · 36 need attention</p>
+              </div>
+              <div class="filters">
+                <button class="chip chip--on" type="button">All</button>
+                <button class="chip" type="button">Paid</button>
+                <button class="chip" type="button">Pending</button>
+                <button class="chip" type="button">Refunded</button>
+              </div>
+            </div>
+            <div class="card">
+              <table class="table">
+                <thead>
+                  <tr><th>Order</th><th>Customer</th><th>Date</th><th>Status</th><th>Total</th><th></th></tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>#10482</td>
+                    <td><div class="person"><img class="avatar" src="https://i.pravatar.cc/64?img=12" alt="">Omar Khalil</div></td>
+                    <td>Oct 21, 2026</td>
+                    <td><span class="badge badge--success">Paid</span></td>
+                    <td class="amount">$248.00</td>
+                    <td><button class="btn" type="button" data-goto="order-details">View</button></td>
+                  </tr>
+                  <tr>
+                    <td>#10481</td>
+                    <td><div class="person"><img class="avatar" src="https://i.pravatar.cc/64?img=32" alt="">Lina Mansour</div></td>
+                    <td>Oct 21, 2026</td>
+                    <td><span class="badge badge--warning">Pending</span></td>
+                    <td class="amount">$89.50</td>
+                    <td><button class="btn" type="button" data-goto="order-details">View</button></td>
+                  </tr>
+                  <tr>
+                    <td>#10480</td>
+                    <td><div class="person"><img class="avatar" src="https://i.pravatar.cc/64?img=15" alt="">Karim Nasser</div></td>
+                    <td>Oct 20, 2026</td>
+                    <td><span class="badge badge--danger">Refunded</span></td>
+                    <td class="amount">$412.20</td>
+                    <td><button class="btn" type="button" data-goto="order-details">View</button></td>
+                  </tr>
+                  <tr>
+                    <td>#10479</td>
+                    <td><div class="person"><img class="avatar" src="https://i.pravatar.cc/64?img=44" alt="">Maya Saleh</div></td>
+                    <td>Oct 20, 2026</td>
+                    <td><span class="badge badge--success">Paid</span></td>
+                    <td class="amount">$1,030.00</td>
+                    <td><button class="btn" type="button" data-goto="order-details">View</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </main>
+        </div>
+      </div>
+    </section>
+
+    <section data-screen="order-details" data-title="Order details">
+      <div class="layout">
+        <aside class="sidebar" data-component="Sidebar">
+          <div class="brand"><span class="brand__logo">P</span> Pulse</div>
+          <nav class="nav">
+            <span class="nav__label">Menu</span>
+            <a class="nav-item" href="#dashboard" data-goto="dashboard">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+              Dashboard
+            </a>
+            <a class="nav-item" href="#orders" data-goto="orders">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              Orders
+            </a>
+            <a class="nav-item" href="#settings" data-goto="settings">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+              Settings
+            </a>
+          </nav>
+          <div class="sidebar__footer">
+            <img class="avatar" src="https://i.pravatar.cc/80?img=47" alt="Sara Haddad">
+            <div class="sidebar__user"><strong>Sara Haddad</strong><span>Store owner</span></div>
+          </div>
+        </aside>
+        <div class="main">
+          <header class="topbar" data-component="Topbar">
+            <label class="search">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              <input type="search" placeholder="Search orders, customers…" aria-label="Search">
+            </label>
+            <div class="topbar__actions">
+              <button class="icon-btn" type="button" aria-label="Notifications">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+              </button>
+              <button class="btn" type="button" data-goto="login">Sign out</button>
+            </div>
+          </header>
+          <main class="content">
+            <button class="back" type="button" data-goto="orders">← Back to orders</button>
+            <div class="page-head">
+              <div>
+                <h1>Order #10482</h1>
+                <p>Placed on Oct 21, 2026 at 09:14 by Omar Khalil</p>
+              </div>
+              <span class="badge badge--success">Paid</span>
+            </div>
+            <div class="grid-2">
+              <div class="card">
+                <div class="card__head"><h2>Items</h2><span>3 items</span></div>
+                <div class="card__body">
+                  <div class="line"><img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=160" alt="Watch"><div class="line__info"><strong>Minimal watch</strong><br><span>Silver · Qty 1</span></div><strong>$149.00</strong></div>
+                  <div class="line"><img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=160" alt="Headphones"><div class="line__info"><strong>Studio headphones</strong><br><span>Black · Qty 1</span></div><strong>$79.00</strong></div>
+                  <div class="line"><img src="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=160" alt="Sunglasses"><div class="line__info"><strong>Sunglasses</strong><br><span>Tortoise · Qty 1</span></div><strong>$20.00</strong></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card__head"><h2>Summary</h2></div>
+                <div class="card__body">
+                  <div class="summary-row"><span>Subtotal</span><span>$248.00</span></div>
+                  <div class="summary-row"><span>Shipping</span><span>Free</span></div>
+                  <div class="summary-row"><span>Tax</span><span>$0.00</span></div>
+                  <div class="summary-row summary-row--total"><span>Total</span><span>$248.00</span></div>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </section>
+
+    <section data-screen="settings" data-title="Settings">
+      <div class="layout">
+        <aside class="sidebar" data-component="Sidebar">
+          <div class="brand"><span class="brand__logo">P</span> Pulse</div>
+          <nav class="nav">
+            <span class="nav__label">Menu</span>
+            <a class="nav-item" href="#dashboard" data-goto="dashboard">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+              Dashboard
+            </a>
+            <a class="nav-item" href="#orders" data-goto="orders">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              Orders
+            </a>
+            <a class="nav-item is-active" href="#settings" data-goto="settings">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+              Settings
+            </a>
+          </nav>
+          <div class="sidebar__footer">
+            <img class="avatar" src="https://i.pravatar.cc/80?img=47" alt="Sara Haddad">
+            <div class="sidebar__user"><strong>Sara Haddad</strong><span>Store owner</span></div>
+          </div>
+        </aside>
+        <div class="main">
+          <header class="topbar" data-component="Topbar">
+            <label class="search">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+              <input type="search" placeholder="Search orders, customers…" aria-label="Search">
+            </label>
+            <div class="topbar__actions">
+              <button class="icon-btn" type="button" aria-label="Notifications">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+              </button>
+              <button class="btn" type="button" data-goto="login">Sign out</button>
+            </div>
+          </header>
+          <main class="content">
+            <div class="page-head">
+              <div>
+                <h1>Settings</h1>
+                <p>Manage your store profile and notifications.</p>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card__head"><h2>Store profile</h2></div>
+              <div class="card__body">
+                <form class="form-grid">
+                  <div class="field"><label for="store-name">Store name</label><input id="store-name" type="text" value="Pulse Goods"></div>
+                  <div class="field"><label for="store-email">Support email</label><input id="store-email" type="email" value="help@pulsegoods.com"></div>
+                  <div class="field"><label for="store-currency">Currency</label>
+                    <select id="store-currency"><option value="usd" selected>USD — US Dollar</option><option value="eur">EUR — Euro</option><option value="aed">AED — UAE Dirham</option></select>
+                  </div>
+                  <div class="field"><label for="store-zone">Time zone</label>
+                    <select id="store-zone"><option>GMT+3 — Riyadh</option><option selected>GMT+4 — Dubai</option></select>
+                  </div>
+                  <div class="field field--full"><label for="store-about">About the store</label><textarea id="store-about">Everyday goods, designed to last. Shipping across the GCC.</textarea></div>
+                </form>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card__head"><h2>Notifications</h2></div>
+              <div class="card__body">
+                <div class="toggle-row"><div><strong>New orders</strong><span>Email me when an order is placed.</span></div><input type="checkbox" checked aria-label="New orders"></div>
+                <div class="toggle-row"><div><strong>Low stock</strong><span>Alert when a product has fewer than 5 items.</span></div><input type="checkbox" checked aria-label="Low stock"></div>
+                <div class="toggle-row"><div><strong>Weekly report</strong><span>A summary every Monday morning.</span></div><input type="checkbox" aria-label="Weekly report"></div>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="btn" type="button" data-goto="dashboard">Cancel</button>
+              <button class="btn btn--primary" type="button">Save changes</button>
+            </div>
+          </main>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

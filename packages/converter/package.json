@@ -1,0 +1,23 @@
+{
+  "name": "@flow2repo/converter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Flow2Repo conversion engine: multi-screen HTML/CSS design to a React + Vite project.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run --dir test --exclude \"**/*.e2e.test.ts\"",
+    "test:e2e": "vitest run --dir test e2e",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "parse5": "^7.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "typescript": "~5.8.3",
+    "vitest": "^3.2.0"
+  }
+}

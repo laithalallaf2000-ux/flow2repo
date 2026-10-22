@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brewly – Coffee subscriptions</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap">
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Poppins,sans-serif;color:#2b1d14;background:#fffaf3}
+header{position:sticky;top:0;background:#fffaf3;display:flex;justify-content:space-between;align-items:center;padding:18px 48px;border-bottom:1px solid #f0e4d4;z-index:5}
+.logo{font-weight:700;font-size:22px} nav a{margin-left:28px;color:#6b4f3a;text-decoration:none}
+.menu-btn{display:none;background:none;border:0;font-size:24px}
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;padding:80px 48px}
+.hero h1{font-size:54px;line-height:1.1;margin:0 0 18px} .btn{display:inline-block;background:#c8622a;color:#fff;padding:14px 26px;border-radius:999px;text-decoration:none;font-weight:600}
+.hero img{width:100%;border-radius:24px}
+section{padding:72px 48px} .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.card{background:#fff;border:1px solid #f0e4d4;border-radius:20px;padding:28px}
+.price{font-size:40px;font-weight:700} .featured{border:2px solid #c8622a}
+footer{padding:40px 48px;background:#2b1d14;color:#e9d8c4}
+@media (max-width:800px){ nav{display:none} nav.open{display:flex;flex-direction:column;position:absolute;top:64px;left:0;right:0;background:#fffaf3;padding:16px} .menu-btn{display:block} .hero,.grid{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">☕ Brewly</div>
+  <button class="menu-btn" id="menuBtn" aria-label="Menu">☰</button>
+  <nav id="nav"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a></nav>
+</header>
+<div class="hero">
+  <div><h1>Fresh coffee, delivered every week.</h1><p>Single-origin beans roasted to order and shipped within 48 hours.</p><a class="btn" href="#pricing">Start your plan</a></div>
+  <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=900" alt="Coffee">
+</div>
+<section id="features"><h2>Why Brewly</h2><div class="grid">
+  <div class="card"><h3>Roasted to order</h3><p>Never older than a week.</p></div>
+  <div class="card"><h3>Pause anytime</h3><p>Skip or cancel in one click.</p></div>
+  <div class="card"><h3>Free shipping</h3><p>On every plan, every week.</p></div>
+</div></section>
+<section id="pricing"><h2>Plans</h2><div class="grid">
+  <div class="card"><h3>Solo</h3><div class="price">$12</div><p>250g / week</p></div>
+  <div class="card featured"><h3>Duo</h3><div class="price">$20</div><p>500g / week</p></div>
+  <div class="card"><h3>Office</h3><div class="price">$45</div><p>1.5kg / week</p></div>
+</div></section>
+<section id="faq"><h2>FAQ</h2><details><summary>Can I change beans?</summary><p>Yes, every week.</p></details></section>
+<footer>© 2026 Brewly · <a href="mailto:hi@brewly.coffee" style="color:#e9d8c4">hi@brewly.coffee</a></footer>
+<script>
+  document.getElementById("menuBtn").addEventListener("click", () => document.getElementById("nav").classList.toggle("open"));
+</script>
+</body>
+</html>

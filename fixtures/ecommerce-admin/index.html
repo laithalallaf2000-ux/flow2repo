@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopline Admin</title>
+<style>
+:root { --bg:#f6f7fb; --card:#fff; --ink:#1b1f3b; --muted:#6b7090; --brand:#4f46e5; --line:#e6e8f2; --ok:#16a34a; --warn:#d97706; --bad:#dc2626; }
+* { box-sizing: border-box; margin: 0; }
+body { font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); }
+.layout { display: flex; min-height: 100vh; }
+.sidebar { width: 232px; background: #11142d; color: #c9cbe3; padding: 20px 14px; display: flex; flex-direction: column; gap: 4px; }
+.sidebar__brand { color: #fff; font-weight: 700; font-size: 18px; padding: 4px 10px 18px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 8px; color: inherit; text-decoration: none; font-size: 14px; }
+.nav-item svg { width: 18px; height: 18px; }
+.nav-item.is-active { background: var(--brand); color: #fff; }
+.main { flex: 1; padding: 24px 32px; display: flex; flex-direction: column; gap: 20px; }
+.topbar { display: flex; align-items: center; justify-content: space-between; }
+.topbar h1 { font-size: 22px; }
+.topbar__actions { display: flex; gap: 10px; }
+.btn { padding: 9px 14px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); font-size: 14px; cursor: pointer; }
+.btn--primary { background: var(--brand); color: #fff; border-color: var(--brand); }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.stat { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+.stat__label { color: var(--muted); font-size: 13px; }
+.stat__value { font-size: 24px; font-weight: 700; }
+.stat__delta { font-size: 12px; color: var(--ok); }
+.stat__delta--down { color: var(--bad); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+.card__title { font-size: 16px; margin-bottom: 12px; }
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th { text-align: left; color: var(--muted); font-weight: 500; padding: 8px; border-bottom: 1px solid var(--line); }
+.table td { padding: 10px 8px; border-bottom: 1px solid var(--line); }
+.tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag { background: #eef0ff; color: var(--brand); border-radius: 999px; padding: 2px 8px; font-size: 12px; }
+.badge { border-radius: 999px; padding: 2px 10px; font-size: 12px; }
+.badge--ok { background: #dcfce7; color: var(--ok); }
+.badge--warn { background: #fef3c7; color: var(--warn); }
+.badge--bad { background: #fee2e2; color: var(--bad); }
+.products { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.product { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
+.product__img { height: 120px; background: linear-gradient(135deg, #c7d2fe, #fbcfe8); }
+.product__body { padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+.product__title { font-size: 15px; }
+.product__price { font-weight: 700; }
+.toolbar { display: flex; gap: 10px; }
+.toolbar input, .toolbar select { padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+.menu { position: relative; }
+.menu__panel { display: none; position: absolute; right: 0; top: 40px; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 6px; min-width: 160px; }
+.menu__panel.is-open { display: block; }
+.menu__panel a { display: block; padding: 8px 10px; color: var(--ink); text-decoration: none; font-size: 14px; }
+.modal { display: none; position: fixed; inset: 0; background: rgba(17,20,45,.5); align-items: center; justify-content: center; }
+.modal.is-open { display: flex; }
+.modal__box { background: #fff; border-radius: 14px; padding: 24px; width: 420px; display: flex; flex-direction: column; gap: 12px; }
+.modal__box label { font-size: 13px; color: var(--muted); }
+.modal__box input, .modal__box select { padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; width: 100%; }
+@media (max-width: 900px) { .stats { grid-template-columns: repeat(2, 1fr); } .products { grid-template-columns: 1fr; } .sidebar { display: none; } }
+</style>
+<style data-f2r="preview">
+body { background: #dfe3f1; }
+[data-f2r="canvas"] { display: grid; grid-template-columns: repeat(3, 1440px); gap: 80px; padding: 80px; }
+[data-screen] { width: 1440px; height: 900px; overflow: hidden; background: var(--bg); box-shadow: 0 10px 40px rgba(0,0,0,.2); }
+</style>
+</head>
+<body>
+<div data-f2r="canvas">
+
+<section data-screen="dashboard" data-title="Dashboard" data-home>
+  <div class="layout">
+    <aside class="sidebar" data-component="Sidebar">
+      <div class="sidebar__brand">Shopline</div>
+      <a class="nav-item is-active" href="#dashboard" data-goto="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
+      <a class="nav-item" href="#products" data-goto="products"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg>Products</a>
+      <a class="nav-item" href="#orders" data-goto="orders"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14h18V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Orders</a>
+    </aside>
+    <div class="main">
+      <header class="topbar">
+        <h1>Dashboard</h1>
+        <div class="topbar__actions">
+          <div class="menu">
+            <button class="btn" type="button" data-toggle="export">Export</button>
+            <div class="menu__panel" data-toggle-target="export"><a href="#csv">CSV</a><a href="#pdf">PDF</a></div>
+          </div>
+          <button class="btn btn--primary" type="button" data-goto="products">Add product</button>
+        </div>
+      </header>
+      <div class="stats">
+        <div class="stat"><span class="stat__label">Revenue</span><span class="stat__value">$84,230</span><span class="stat__delta">▲ 12.4%</span></div>
+        <div class="stat"><span class="stat__label">Orders</span><span class="stat__value">1,842</span><span class="stat__delta">▲ 6.1%</span></div>
+        <div class="stat"><span class="stat__label">Customers</span><span class="stat__value">9,310</span><span class="stat__delta">▲ 2.8%</span></div>
+        <div class="stat"><span class="stat__label">Refunds</span><span class="stat__value">$1,120</span><span class="stat__delta stat__delta--down">▼ 1.9%</span></div>
+      </div>
+      <div class="card">
+        <h2 class="card__title">Recent orders</h2>
+        <table class="table">
+          <thead><tr><th>Order</th><th>Customer</th><th>Date</th><th>Status</th><th>Total</th></tr></thead>
+          <tbody>
+            <tr><td>#20931</td><td>Hana Aziz</td><td>Oct 21, 2026</td><td><span class="badge badge--ok">Paid</span></td><td>$128.00</td></tr>
+            <tr><td>#20930</td><td>Jon Ellis</td><td>Oct 21, 2026</td><td><span class="badge badge--warn">Pending</span></td><td>$64.90</td></tr>
+            <tr><td>#20929</td><td>Mira Hadid</td><td>Oct 20, 2026</td><td><span class="badge badge--bad">Refunded</span></td><td>$212.40</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen="products" data-title="Products">
+  <div class="layout">
+    <aside class="sidebar" data-component="Sidebar">
+      <div class="sidebar__brand">Shopline</div>
+      <a class="nav-item" href="#dashboard" data-goto="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
+      <a class="nav-item is-active" href="#products" data-goto="products"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg>Products</a>
+      <a class="nav-item" href="#orders" data-goto="orders"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14h18V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Orders</a>
+    </aside>
+    <div class="main">
+      <header class="topbar">
+        <h1>Products</h1>
+        <div class="topbar__actions">
+          <button class="btn btn--primary" type="button" data-toggle="new-product">New product</button>
+        </div>
+      </header>
+      <form class="toolbar" id="product-search">
+        <input type="search" name="q" placeholder="Search products">
+        <select name="category">
+          <option value="">All categories</option>
+          <option value="shoes">Shoes</option>
+          <option value="bags" selected>Bags</option>
+        </select>
+        <label><input type="checkbox" name="in-stock" checked> In stock only</label>
+        <button class="btn" type="submit">Filter</button>
+      </form>
+      <div class="products">
+        <article class="product">
+          <div class="product__img"></div>
+          <div class="product__body">
+            <h3 class="product__title">Trail Runner</h3>
+            <span class="product__price">$129</span>
+            <ul class="tags"><li class="tag">New</li><li class="tag">Popular</li><li class="tag">Sale</li></ul>
+          </div>
+        </article>
+        <article class="product">
+          <div class="product__img"></div>
+          <div class="product__body">
+            <h3 class="product__title">City Backpack</h3>
+            <span class="product__price">$89</span>
+            <ul class="tags"><li class="tag">Featured</li></ul>
+          </div>
+        </article>
+        <article class="product">
+          <div class="product__img"></div>
+          <div class="product__body">
+            <h3 class="product__title">Weekender Duffel</h3>
+            <span class="product__price">$149</span>
+            <ul class="tags"><li class="tag">New</li><li class="tag">Limited</li></ul>
+          </div>
+        </article>
+      </div>
+      <div class="modal" data-toggle-target="new-product">
+        <form class="modal__box" id="new-product-form">
+          <h2>New product</h2>
+          <label for="np-title">Title</label>
+          <input id="np-title" name="title" required>
+          <label for="np-price">Price</label>
+          <input id="np-price" name="price" type="number" min="0" required>
+          <label for="np-cat">Category</label>
+          <select id="np-cat" name="category"><option value="shoes">Shoes</option><option value="bags">Bags</option></select>
+          <div class="topbar__actions">
+            <button class="btn" type="button" data-close="new-product">Cancel</button>
+            <button class="btn btn--primary" type="submit">Save</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section data-screen="orders" data-title="Orders">
+  <div class="layout">
+    <aside class="sidebar" data-component="Sidebar">
+      <div class="sidebar__brand">Shopline</div>
+      <a class="nav-item" href="#dashboard" data-goto="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</a>
+      <a class="nav-item" href="#products" data-goto="products"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg>Products</a>
+      <a class="nav-item is-active" href="#orders" data-goto="orders"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14h18V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>Orders</a>
+    </aside>
+    <div class="main">
+      <header class="topbar"><h1>Orders</h1></header>
+      <div class="card">
+        <h2 class="card__title">All orders</h2>
+        <table class="table">
+          <thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Status</th><th>Total</th></tr></thead>
+          <tbody>
+            <tr><td>#20931</td><td>Hana Aziz</td><td><ul class="tags"><li class="tag">Trail Runner</li><li class="tag">Socks</li><li class="tag">Laces</li></ul></td><td><span class="badge badge--ok">Paid</span></td><td>$128.00</td></tr>
+            <tr><td>#20930</td><td>Jon Ellis</td><td><ul class="tags"><li class="tag">City Backpack</li></ul></td><td><span class="badge badge--warn">Pending</span></td><td>$64.90</td></tr>
+            <tr><td>#20929</td><td>Mira Hadid</td><td><ul class="tags"><li class="tag">Weekender Duffel</li><li class="tag">Tag</li></ul></td><td><span class="badge badge--bad">Refunded</span></td><td>$212.40</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+</body>
+</html>

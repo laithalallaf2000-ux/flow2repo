@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FitTrack – App Screens</title>
+<style>
+  body { margin: 0; background: #e9ecf2; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .board { display: flex; gap: 40px; padding: 40px; flex-wrap: wrap; }
+  .screen-wrap { display: flex; flex-direction: column; gap: 12px; }
+  .label { font-weight: 600; color: #555; }
+  .screen { width: 390px; min-height: 780px; background: #fff; border-radius: 36px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,.12); display: flex; flex-direction: column; }
+  .header { padding: 28px 24px 12px; display: flex; justify-content: space-between; align-items: center; }
+  .header h1 { font-size: 22px; margin: 0; }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; }
+  .body { padding: 12px 24px; flex: 1; display: flex; flex-direction: column; gap: 16px; }
+  .card { border-radius: 20px; padding: 18px; background: #f4f6fb; }
+  .card.hero { background: linear-gradient(135deg, #ff7a59, #ff3d7f); color: #fff; }
+  .card h3 { margin: 0 0 6px; font-size: 15px; }
+  .big { font-size: 34px; font-weight: 700; }
+  .row { display: flex; gap: 12px; }
+  .row .card { flex: 1; }
+  .muted { color: #8a90a2; font-size: 13px; }
+  .tabbar { display: flex; justify-content: space-around; padding: 14px 0 24px; border-top: 1px solid #eef0f5; }
+  .tabbar button { background: none; border: 0; font: inherit; font-size: 12px; color: #8a90a2; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .tabbar button.active { color: #ff3d7f; font-weight: 600; }
+  .list-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #eef0f5; }
+  .dot { width: 42px; height: 42px; border-radius: 12px; background: #ffe3ea; display: grid; place-items: center; }
+  .primary { background: #ff3d7f; color: #fff; border: 0; border-radius: 14px; height: 50px; font-weight: 600; font-size: 15px; }
+  input[type=range] { width: 100%; }
+</style>
+</head>
+<body>
+<div class="board">
+
+  <div class="screen-wrap">
+    <div class="label">Home</div>
+    <div class="screen">
+      <div class="header"><div><span class="muted">Tuesday, Oct 21</span><h1>Hi, Nour 👋</h1></div><img class="avatar" src="https://i.pravatar.cc/80?img=5" alt=""></div>
+      <div class="body">
+        <div class="card hero"><h3>Today's steps</h3><div class="big">8,432</div><span>84% of your 10k goal</span></div>
+        <div class="row">
+          <div class="card"><h3>Calories</h3><div class="big" style="font-size:24px">512</div><span class="muted">kcal burned</span></div>
+          <div class="card"><h3>Sleep</h3><div class="big" style="font-size:24px">7h 20m</div><span class="muted">last night</span></div>
+        </div>
+        <button class="primary" onclick="startWorkout()">Start workout</button>
+      </div>
+      <div class="tabbar">
+        <button class="active">🏠<span>Home</span></button>
+        <button>📈<span>Activity</span></button>
+        <button>⚙️<span>Profile</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen-wrap">
+    <div class="label">Activity</div>
+    <div class="screen">
+      <div class="header"><h1>Activity</h1><img class="avatar" src="https://i.pravatar.cc/80?img=5" alt=""></div>
+      <div class="body">
+        <div class="list-item"><div class="dot">🏃</div><div><strong>Morning run</strong><div class="muted">5.2 km · 28 min</div></div></div>
+        <div class="list-item"><div class="dot">🚴</div><div><strong>Cycling</strong><div class="muted">14 km · 41 min</div></div></div>
+        <div class="list-item"><div class="dot">🧘</div><div><strong>Yoga</strong><div class="muted">30 min</div></div></div>
+        <div class="list-item"><div class="dot">🏊</div><div><strong>Swimming</strong><div class="muted">1.1 km · 35 min</div></div></div>
+      </div>
+      <div class="tabbar">
+        <button>🏠<span>Home</span></button>
+        <button class="active">📈<span>Activity</span></button>
+        <button>⚙️<span>Profile</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen-wrap">
+    <div class="label">Profile</div>
+    <div class="screen">
+      <div class="header"><h1>Profile</h1><img class="avatar" src="https://i.pravatar.cc/80?img=5" alt=""></div>
+      <div class="body">
+        <div class="card"><h3>Daily step goal</h3><input type="range" min="2000" max="20000" value="10000"><span class="muted">10,000 steps</span></div>
+        <div class="card"><h3>Units</h3><label><input type="radio" name="u" checked> Metric</label> <label><input type="radio" name="u"> Imperial</label></div>
+        <div class="card"><h3>Reminders</h3><label><input type="checkbox" checked> Move every hour</label></div>
+        <button class="primary">Save</button>
+      </div>
+      <div class="tabbar">
+        <button>🏠<span>Home</span></button>
+        <button>📈<span>Activity</span></button>
+        <button class="active">⚙️<span>Profile</span></button>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+  function startWorkout() { alert("Workout started"); }
+</script>
+</body>
+</html>

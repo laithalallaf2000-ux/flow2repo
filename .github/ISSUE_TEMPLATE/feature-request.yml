@@ -1,0 +1,16 @@
+name: Feature request
+description: Suggest something Flow2Repo should convert or do.
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: Describe the design or the situation, not only the solution.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like Flow2Repo to generate?
+      description: A small example of the input HTML and the React code you would expect is ideal.

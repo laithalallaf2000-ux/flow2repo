@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tailwind App</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: { brand: "#4f46e5" } } } }
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-900">
+  <div data-f2r="canvas">
+    <section data-screen="home" data-home>
+      <header data-component="Header" class="flex items-center justify-between bg-white p-4 shadow">
+        <h1 class="text-xl font-bold text-brand">Home</h1>
+        <a data-goto="pricing" class="text-sm underline">Pricing</a>
+      </header>
+      <main class="grid grid-cols-3 gap-4 p-6">
+        <div class="rounded bg-white p-4 shadow"><span class="text-sm text-slate-500">Users</span><strong class="block text-2xl">1,204</strong></div>
+        <div class="rounded bg-white p-4 shadow"><span class="text-sm text-slate-500">Revenue</span><strong class="block text-2xl">$9,400</strong></div>
+        <div class="rounded bg-white p-4 shadow"><span class="text-sm text-slate-500">Churn</span><strong class="block text-2xl">2.1%</strong></div>
+      </main>
+    </section>
+    <section data-screen="pricing">
+      <header data-component="Header" class="flex items-center justify-between bg-white p-4 shadow">
+        <h1 class="text-xl font-bold text-brand">Pricing</h1>
+        <a data-goto="home" class="text-sm underline">Home</a>
+      </header>
+      <div class="p-6">
+        <div class="flex gap-2">
+          <button data-tab-group="billing" data-tab="monthly" class="rounded px-3 py-1 is-active">Monthly</button>
+          <button data-tab-group="billing" data-tab="yearly" class="rounded px-3 py-1">Yearly</button>
+        </div>
+        <p data-tab-group="billing" data-tab-panel="monthly" class="mt-4">$10 per month</p>
+        <p data-tab-group="billing" data-tab-panel="yearly" class="mt-4" hidden>$100 per year</p>
+        <button data-toggle="faq" class="mt-4 rounded bg-brand px-3 py-1 text-white">FAQ</button>
+        <div data-toggle-target="faq" class="hidden [&.is-open]:block">Cancel any time.</div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

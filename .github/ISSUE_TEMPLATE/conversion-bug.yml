@@ -1,0 +1,38 @@
+name: Conversion bug
+description: A design that converts badly, fails to build or looks different from the original.
+labels: ["bug", "conversion"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks! Real designs are the best way to make Flow2Repo better. Please remove anything private from the design first.
+  - type: dropdown
+    id: source
+    attributes:
+      label: How was the design made?
+      options:
+        - With the Flow2Repo dashboard prompt
+        - With the Flow2Repo website prompt
+        - Another prompt or AI tool
+        - By hand
+    validations:
+      required: true
+  - type: textarea
+    id: design
+    attributes:
+      label: The design
+      description: Attach the HTML file, or a ZIP with the HTML and its assets.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened instead?
+      description: Screenshots of the preview and of the generated project help a lot. Paste the conversion report if it shows warnings.
+    validations:
+      required: true

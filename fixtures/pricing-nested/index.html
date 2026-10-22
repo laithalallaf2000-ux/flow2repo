@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beacon</title>
+<style>
+:root { --ink:#101828; --muted:#667085; --brand:#e11d48; --line:#eaecf0; --bg:#fff; }
+* { box-sizing: border-box; margin: 0; }
+body { font-family: system-ui, sans-serif; color: var(--ink); background: var(--bg); }
+.nav { display: flex; justify-content: space-between; align-items: center; padding: 18px 48px; border-bottom: 1px solid var(--line); }
+.nav__brand { font-weight: 800; font-size: 20px; color: var(--brand); }
+.nav__links { display: flex; gap: 22px; }
+.nav__links a { color: var(--muted); text-decoration: none; font-size: 14px; }
+.hero { padding: 72px 48px 40px; text-align: center; display: flex; flex-direction: column; gap: 14px; align-items: center; }
+.hero h1 { font-size: 44px; max-width: 720px; }
+.hero p { color: var(--muted); max-width: 560px; }
+.btn { padding: 11px 20px; border-radius: 10px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-size: 15px; text-decoration: none; color: var(--ink); }
+.btn--brand { background: var(--brand); border-color: var(--brand); color: #fff; }
+.plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 24px 48px 56px; }
+.plan { border: 1px solid var(--line); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
+.plan--featured { border-color: var(--brand); box-shadow: 0 8px 30px rgba(225,29,72,.15); }
+.plan__name { font-size: 15px; color: var(--muted); }
+.plan__price { font-size: 36px; font-weight: 800; }
+.plan__features { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+.plan__features li::before { content: "✓ "; color: var(--brand); }
+.faq { max-width: 720px; margin: 0 auto; padding: 0 24px 48px; display: flex; flex-direction: column; gap: 8px; }
+.faq__item { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.faq__q { width: 100%; display: flex; justify-content: space-between; background: none; border: 0; font: inherit; font-weight: 600; cursor: pointer; }
+.faq__a { display: none; color: var(--muted); padding-top: 8px; font-size: 14px; }
+.faq__a.is-open { display: block; }
+.footer { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 24px; padding: 40px 48px; border-top: 1px solid var(--line); background: #f9fafb; }
+.footer__col h4 { font-size: 13px; margin-bottom: 10px; }
+.footer__col ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.footer__col a { color: var(--muted); text-decoration: none; font-size: 14px; }
+@media (max-width: 800px) { .plans { grid-template-columns: 1fr; } .footer { grid-template-columns: 1fr 1fr; } }
+</style>
+<style data-f2r="preview">
+body { background: #e2e4ea; }
+[data-f2r="canvas"] { display: grid; grid-template-columns: repeat(2, 1280px); gap: 80px; padding: 80px; }
+[data-screen] { width: 1280px; min-height: 900px; background: var(--bg); }
+</style>
+</head>
+<body>
+<div data-f2r="canvas">
+
+<section data-screen="home" data-title="Home" data-home>
+  <header class="nav" data-component="Navbar">
+    <div class="nav__brand">Beacon</div>
+    <nav class="nav__links">
+      <a href="#home" data-goto="home">Home</a>
+      <a href="#pricing" data-goto="pricing">Pricing</a>
+      <a href="#help" data-goto="help">Help</a>
+    </nav>
+  </header>
+  <div class="hero">
+    <h1>Know what your users do, before they ask</h1>
+    <p>Beacon turns product events into clear weekly answers for your whole team.</p>
+    <a class="btn btn--brand" href="#pricing" data-goto="pricing">See pricing</a>
+  </div>
+  <footer class="footer" data-component="Footer">
+    <div class="footer__col"><strong>Beacon</strong><p>Product analytics for small teams.</p></div>
+    <div class="footer__col"><h4>Product</h4><ul><li><a href="#features">Features</a></li><li><a href="#changelog">Changelog</a></li><li><a href="#roadmap">Roadmap</a></li></ul></div>
+    <div class="footer__col"><h4>Company</h4><ul><li><a href="#about">About</a></li><li><a href="#careers">Careers</a></li></ul></div>
+    <div class="footer__col"><h4>Legal</h4><ul><li><a href="#privacy">Privacy</a></li><li><a href="#terms">Terms</a></li><li><a href="#security">Security</a></li><li><a href="#dpa">DPA</a></li></ul></div>
+  </footer>
+</section>
+
+<section data-screen="pricing" data-title="Pricing">
+  <header class="nav" data-component="Navbar">
+    <div class="nav__brand">Beacon</div>
+    <nav class="nav__links">
+      <a href="#home" data-goto="home">Home</a>
+      <a href="#pricing" data-goto="pricing">Pricing</a>
+      <a href="#help" data-goto="help">Help</a>
+    </nav>
+  </header>
+  <div class="hero"><h1>Simple pricing</h1><p>Start free. Upgrade when your team grows.</p></div>
+  <div class="plans">
+    <article class="plan">
+      <span class="plan__name">Starter</span>
+      <span class="plan__price">$0</span>
+      <ul class="plan__features"><li>1 project</li><li>7-day history</li><li>Community support</li></ul>
+      <a class="btn" href="#help" data-goto="help">Get started</a>
+    </article>
+    <article class="plan plan--featured">
+      <span class="plan__name">Team</span>
+      <span class="plan__price">$29</span>
+      <ul class="plan__features"><li>10 projects</li><li>1-year history</li><li>Priority support</li><li>SSO</li><li>Audit log</li></ul>
+      <a class="btn btn--brand" href="#help" data-goto="help">Start trial</a>
+    </article>
+    <article class="plan">
+      <span class="plan__name">Scale</span>
+      <span class="plan__price">$99</span>
+      <ul class="plan__features"><li>Unlimited projects</li><li>Unlimited history</li><li>Dedicated manager</li><li>Custom contracts</li></ul>
+      <a class="btn" href="#help" data-goto="help">Contact sales</a>
+    </article>
+  </div>
+  <footer class="footer" data-component="Footer">
+    <div class="footer__col"><strong>Beacon</strong><p>Product analytics for small teams.</p></div>
+    <div class="footer__col"><h4>Product</h4><ul><li><a href="#features">Features</a></li><li><a href="#changelog">Changelog</a></li><li><a href="#roadmap">Roadmap</a></li></ul></div>
+    <div class="footer__col"><h4>Company</h4><ul><li><a href="#about">About</a></li><li><a href="#careers">Careers</a></li></ul></div>
+    <div class="footer__col"><h4>Legal</h4><ul><li><a href="#privacy">Privacy</a></li><li><a href="#terms">Terms</a></li><li><a href="#security">Security</a></li><li><a href="#dpa">DPA</a></li></ul></div>
+  </footer>
+</section>
+
+<section data-screen="help" data-title="Help">
+  <header class="nav" data-component="Navbar">
+    <div class="nav__brand">Beacon</div>
+    <nav class="nav__links">
+      <a href="#home" data-goto="home">Home</a>
+      <a href="#pricing" data-goto="pricing">Pricing</a>
+      <a href="#help" data-goto="help">Help</a>
+    </nav>
+  </header>
+  <div class="hero"><h1>Frequently asked questions</h1></div>
+  <div class="faq">
+    <div class="faq__item"><button class="faq__q" type="button" data-toggle="trial">Is there a free trial? <span>+</span></button><p class="faq__a" data-toggle-target="trial">Yes, every paid plan starts with a 14-day trial. No card needed.</p></div>
+    <div class="faq__item"><button class="faq__q" type="button" data-toggle="export">Can I export my data? <span>+</span></button><p class="faq__a" data-toggle-target="export">Anytime, as CSV or through the API.</p></div>
+    <div class="faq__item"><button class="faq__q" type="button" data-toggle="cancel">How do I cancel? <span>+</span></button><p class="faq__a" data-toggle-target="cancel">From Settings, in two clicks. You keep access until the period ends.</p></div>
+  </div>
+  <footer class="footer" data-component="Footer">
+    <div class="footer__col"><strong>Beacon</strong><p>Product analytics for small teams.</p></div>
+    <div class="footer__col"><h4>Product</h4><ul><li><a href="#features">Features</a></li><li><a href="#changelog">Changelog</a></li><li><a href="#roadmap">Roadmap</a></li></ul></div>
+    <div class="footer__col"><h4>Company</h4><ul><li><a href="#about">About</a></li><li><a href="#careers">Careers</a></li></ul></div>
+    <div class="footer__col"><h4>Legal</h4><ul><li><a href="#privacy">Privacy</a></li><li><a href="#terms">Terms</a></li><li><a href="#security">Security</a></li><li><a href="#dpa">DPA</a></li></ul></div>
+  </footer>
+</section>
+
+</div>
+</body>
+</html>

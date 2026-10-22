@@ -1,0 +1,3369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NexaFlow Dashboard</title>
+
+  <style>
+    :root {
+      --color-bg: #f4f7fb;
+      --color-surface: #ffffff;
+      --color-surface-soft: #f8fbff;
+      --color-border: #e5ebf3;
+
+      --color-primary: #2563eb;
+      --color-primary-dark: #1d4ed8;
+      --color-primary-soft: #eff6ff;
+      --color-primary-light: #60a5fa;
+
+      --color-text: #172033;
+      --color-text-soft: #65738b;
+      --color-muted: #94a3b8;
+
+      --color-success: #16a34a;
+      --color-success-soft: #ecfdf3;
+      --color-warning: #d97706;
+      --color-warning-soft: #fff7ed;
+      --color-danger: #dc2626;
+      --color-danger-soft: #fef2f2;
+
+      --sidebar-width: 252px;
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+      --shadow-card: 0 8px 30px rgba(34, 64, 120, 0.07);
+
+      --transition: 180ms ease;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--color-text);
+      background: var(--color-bg);
+    }
+
+    body {
+      margin: 0;
+      background: var(--color-bg);
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    img,
+    svg {
+      display: block;
+    }
+
+    [data-screen] {
+      min-height: 100vh;
+      background: var(--color-bg);
+      display: grid;
+      grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+    }
+
+    .sidebar {
+      background: #0d1e3d;
+      color: #dce8ff;
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sidebar::before {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: rgba(59, 130, 246, 0.16);
+      top: -100px;
+      right: -100px;
+    }
+
+    .sidebar__brand {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 0 10px 30px;
+    }
+
+    .sidebar__logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, #3b82f6, #60a5fa);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+    }
+
+    .sidebar__logo svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .sidebar__brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar__brand-name {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+    }
+
+    .sidebar__brand-subtitle {
+      margin-top: 2px;
+      font-size: 10px;
+      color: #84a2d4;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .sidebar__label {
+      padding: 0 12px 9px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #718bb6;
+    }
+
+    .sidebar__nav {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 12px;
+      border-radius: 10px;
+      color: #aebfdd;
+      font-size: 13px;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    .nav-item svg {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #ffffff;
+    }
+
+    .nav-item.is-active {
+      color: #ffffff;
+      background: linear-gradient(
+        90deg,
+        rgba(37, 99, 235, 0.95),
+        rgba(59, 130, 246, 0.75)
+      );
+      box-shadow: 0 8px 18px rgba(0, 60, 180, 0.22);
+    }
+
+    .sidebar__spacer {
+      flex: 1;
+    }
+
+    .sidebar__upgrade {
+      position: relative;
+      z-index: 1;
+      margin: 24px 4px 18px;
+      padding: 16px;
+      background: linear-gradient(
+        145deg,
+        rgba(59, 130, 246, 0.22),
+        rgba(37, 99, 235, 0.08)
+      );
+      border: 1px solid rgba(147, 197, 253, 0.16);
+      border-radius: 14px;
+    }
+
+    .sidebar__upgrade-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .sidebar__upgrade-copy {
+      font-size: 10px;
+      line-height: 1.5;
+      color: #91a9cd;
+      margin: 7px 0 12px;
+    }
+
+    .sidebar__upgrade-link {
+      font-size: 11px;
+      font-weight: 600;
+      color: #bfdbfe;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .sidebar__user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 9px 2px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      position: relative;
+      z-index: 1;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #dbeafe;
+      color: #1d4ed8;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 12px;
+      flex: 0 0 auto;
+    }
+
+    .sidebar__user-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .sidebar__user-role {
+      margin-top: 2px;
+      font-size: 10px;
+      color: #8199bf;
+    }
+
+    .app {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: 74px;
+      flex: 0 0 auto;
+      background: rgba(255, 255, 255, 0.92);
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 0 34px;
+    }
+
+    .topbar__search {
+      width: min(430px, 48vw);
+      position: relative;
+    }
+
+    .topbar__search label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      clip: rect(0 0 0 0);
+      overflow: hidden;
+    }
+
+    .topbar__search svg {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      color: var(--color-muted);
+    }
+
+    .topbar__search input {
+      width: 100%;
+      height: 40px;
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      background: #f8fafc;
+      color: var(--color-text);
+      padding: 0 14px 0 39px;
+      outline: none;
+    }
+
+    .topbar__search input:focus {
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 3px #eff6ff;
+      background: #ffffff;
+    }
+
+    .topbar__actions {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .icon-button {
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--color-border);
+      background: #ffffff;
+      border-radius: 10px;
+      color: #64748b;
+      display: grid;
+      place-items: center;
+    }
+
+    .icon-button svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .topbar__profile {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding-left: 7px;
+    }
+
+    .topbar__profile-copy {
+      line-height: 1.2;
+    }
+
+    .topbar__profile-name {
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .topbar__profile-role {
+      margin-top: 4px;
+      font-size: 10px;
+      color: var(--color-text-soft);
+    }
+
+    .content {
+      flex: 1;
+      width: 100%;
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 30px 34px 42px;
+    }
+
+    .page-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 27px;
+    }
+
+    .page-heading__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--color-primary);
+      margin-bottom: 7px;
+    }
+
+    .page-heading h1 {
+      margin: 0;
+      font-size: clamp(23px, 2.5vw, 30px);
+      font-weight: 700;
+      letter-spacing: -0.035em;
+    }
+
+    .page-heading p {
+      margin: 7px 0 0;
+      color: var(--color-text-soft);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .page-heading__actions {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      min-height: 40px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      padding: 0 15px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .btn svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    .btn--primary {
+      background: var(--color-primary);
+      color: #ffffff;
+      box-shadow: 0 7px 16px rgba(37, 99, 235, 0.18);
+    }
+
+    .btn--secondary {
+      background: #ffffff;
+      color: #475569;
+      border-color: var(--color-border);
+    }
+
+    .btn--danger {
+      background: var(--color-danger-soft);
+      color: var(--color-danger);
+      border-color: #fecaca;
+    }
+
+    .btn--small {
+      min-height: 32px;
+      padding: 0 11px;
+      font-size: 11px;
+    }
+
+    .card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card__header {
+      padding: 19px 20px;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .card__title {
+      font-size: 13px;
+      font-weight: 650;
+      margin: 0;
+    }
+
+    .card__subtitle {
+      margin: 4px 0 0;
+      font-size: 11px;
+      color: var(--color-text-soft);
+    }
+
+    .card__body {
+      padding: 20px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 15px;
+      margin-bottom: 17px;
+    }
+
+    .stat-card {
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card__top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .stat-card__icon {
+      width: 39px;
+      height: 39px;
+      border-radius: 11px;
+      background: var(--color-primary-soft);
+      color: var(--color-primary);
+      display: grid;
+      place-items: center;
+    }
+
+    .stat-card__icon svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .stat-card__trend {
+      font-size: 10px;
+      font-weight: 650;
+      border-radius: 999px;
+      padding: 5px 7px;
+    }
+
+    .stat-card__trend--up {
+      color: var(--color-success);
+      background: var(--color-success-soft);
+    }
+
+    .stat-card__trend--down {
+      color: var(--color-danger);
+      background: var(--color-danger-soft);
+    }
+
+    .stat-card__value {
+      margin-top: 19px;
+      font-size: 25px;
+      font-weight: 700;
+      letter-spacing: -0.035em;
+    }
+
+    .stat-card__label {
+      margin-top: 5px;
+      color: var(--color-text-soft);
+      font-size: 11px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.65fr) minmax(260px, 0.75fr);
+      gap: 17px;
+      margin-bottom: 17px;
+    }
+
+    .chart {
+      height: 245px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chart__legend {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 10px;
+      color: var(--color-text-soft);
+    }
+
+    .chart__legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .chart__dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--color-primary);
+    }
+
+    .chart__dot--light {
+      background: #bfdbfe;
+    }
+
+    .bar-chart {
+      flex: 1;
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      align-items: end;
+      gap: 10px;
+      border-bottom: 1px solid var(--color-border);
+      background-image: linear-gradient(
+        to top,
+        transparent 24%,
+        #eef2f7 25%,
+        transparent 26%,
+        transparent 49%,
+        #eef2f7 50%,
+        transparent 51%,
+        transparent 74%,
+        #eef2f7 75%,
+        transparent 76%
+      );
+    }
+
+    .bar-chart__group {
+      height: 100%;
+      display: flex;
+      align-items: end;
+      justify-content: center;
+      gap: 3px;
+    }
+
+    .bar-chart__bar {
+      width: 8px;
+      min-height: 6px;
+      border-radius: 5px 5px 0 0;
+      background: linear-gradient(to top, #2563eb, #60a5fa);
+    }
+
+    .bar-chart__bar--secondary {
+      background: #dbeafe;
+    }
+
+    .bar-chart__labels {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 9px;
+      font-size: 9px;
+      color: var(--color-muted);
+      text-align: center;
+    }
+
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .activity-item {
+      display: flex;
+      gap: 11px;
+      padding: 10px 0;
+    }
+
+    .activity-item + .activity-item {
+      border-top: 1px solid #edf1f6;
+    }
+
+    .activity-item__icon {
+      width: 31px;
+      height: 31px;
+      border-radius: 9px;
+      background: var(--color-primary-soft);
+      color: var(--color-primary);
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+    }
+
+    .activity-item__icon svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .activity-item__text {
+      font-size: 11px;
+      line-height: 1.45;
+    }
+
+    .activity-item__text strong {
+      font-weight: 650;
+    }
+
+    .activity-item__time {
+      font-size: 9px;
+      color: var(--color-muted);
+      margin-top: 4px;
+    }
+
+    .table-card {
+      overflow: hidden;
+    }
+
+    .table-toolbar {
+      padding: 16px 19px;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .table-toolbar__group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .field input,
+    .field select,
+    .field textarea,
+    .toolbar-input,
+    .toolbar-select {
+      border: 1px solid var(--color-border);
+      border-radius: 9px;
+      background: #ffffff;
+      color: var(--color-text);
+      outline: none;
+    }
+
+    .field input,
+    .field select {
+      height: 42px;
+      padding: 0 12px;
+    }
+
+    .field textarea {
+      min-height: 110px;
+      padding: 11px 12px;
+      resize: vertical;
+    }
+
+    .toolbar-input {
+      width: 210px;
+      height: 35px;
+      padding: 0 11px;
+      font-size: 11px;
+    }
+
+    .toolbar-select {
+      height: 35px;
+      padding: 0 30px 0 11px;
+      font-size: 11px;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus,
+    .toolbar-input:focus,
+    .toolbar-select:focus {
+      border-color: #93c5fd;
+      box-shadow: 0 0 0 3px #eff6ff;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 780px;
+    }
+
+    .data-table th {
+      padding: 11px 18px;
+      text-align: left;
+      color: var(--color-text-soft);
+      background: #f9fbfd;
+      border-bottom: 1px solid var(--color-border);
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .data-table td {
+      padding: 14px 18px;
+      border-bottom: 1px solid #edf1f6;
+      font-size: 11px;
+      vertical-align: middle;
+    }
+
+    .data-table tbody tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+    }
+
+    .customer-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .customer-cell__avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      background: #eff6ff;
+      color: #2563eb;
+      font-weight: 700;
+      font-size: 10px;
+    }
+
+    .customer-cell__name {
+      font-weight: 600;
+      font-size: 11px;
+    }
+
+    .customer-cell__email {
+      margin-top: 3px;
+      color: var(--color-muted);
+      font-size: 9px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      min-height: 24px;
+      padding: 0 8px;
+      border-radius: 999px;
+      font-size: 9px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .badge::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+    }
+
+    .badge--success {
+      color: var(--color-success);
+      background: var(--color-success-soft);
+    }
+
+    .badge--success::before {
+      background: var(--color-success);
+    }
+
+    .badge--warning {
+      color: var(--color-warning);
+      background: var(--color-warning-soft);
+    }
+
+    .badge--warning::before {
+      background: var(--color-warning);
+    }
+
+    .badge--info {
+      color: var(--color-primary);
+      background: var(--color-primary-soft);
+    }
+
+    .badge--info::before {
+      background: var(--color-primary);
+    }
+
+    .badge--neutral {
+      color: #64748b;
+      background: #f1f5f9;
+    }
+
+    .badge--neutral::before {
+      background: #94a3b8;
+    }
+
+    .money {
+      font-weight: 650;
+      color: #24324a;
+    }
+
+    .table-actions {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .link-button {
+      border: 0;
+      background: transparent;
+      color: var(--color-primary);
+      padding: 0;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .pagination {
+      padding: 14px 18px;
+      border-top: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      font-size: 10px;
+      color: var(--color-text-soft);
+    }
+
+    .pagination__pages {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .pagination__button {
+      width: 29px;
+      height: 29px;
+      border-radius: 8px;
+      border: 1px solid var(--color-border);
+      background: #ffffff;
+      color: #64748b;
+      font-size: 10px;
+    }
+
+    .pagination__button.is-active {
+      background: var(--color-primary);
+      color: #ffffff;
+      border-color: var(--color-primary);
+    }
+
+    .customer-summary {
+      display: grid;
+      grid-template-columns: 1.4fr repeat(3, 0.75fr);
+      gap: 15px;
+      margin-bottom: 17px;
+    }
+
+    .summary-profile {
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .summary-profile .avatar {
+      width: 48px;
+      height: 48px;
+      font-size: 14px;
+      border-radius: 14px;
+    }
+
+    .summary-profile__name {
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .summary-profile__email {
+      font-size: 10px;
+      color: var(--color-text-soft);
+      margin-top: 4px;
+    }
+
+    .summary-profile__meta {
+      display: flex;
+      gap: 7px;
+      margin-top: 8px;
+    }
+
+    .summary-mini {
+      padding: 18px;
+    }
+
+    .summary-mini__label {
+      font-size: 10px;
+      color: var(--color-text-soft);
+    }
+
+    .summary-mini__value {
+      margin-top: 9px;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(290px, 0.6fr);
+      gap: 17px;
+    }
+
+    .order-header {
+      padding: 20px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .order-header__number {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .order-header__meta {
+      color: var(--color-text-soft);
+      font-size: 10px;
+      margin-top: 5px;
+    }
+
+    .product-line {
+      display: grid;
+      grid-template-columns: 50px minmax(0, 1fr) auto;
+      gap: 13px;
+      align-items: center;
+      padding: 13px 0;
+    }
+
+    .product-line + .product-line {
+      border-top: 1px solid var(--color-border);
+    }
+
+    .product-line__image {
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+      display: grid;
+      place-items: center;
+      color: #2563eb;
+    }
+
+    .product-line__image svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    .product-line__title {
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .product-line__meta {
+      margin-top: 4px;
+      font-size: 9px;
+      color: var(--color-muted);
+    }
+
+    .product-line__price {
+      text-align: right;
+      font-size: 11px;
+      font-weight: 650;
+    }
+
+    .totals {
+      margin-top: 11px;
+      padding-top: 12px;
+      border-top: 1px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .totals__row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      color: var(--color-text-soft);
+      font-size: 10px;
+    }
+
+    .totals__row--final {
+      padding-top: 9px;
+      border-top: 1px solid var(--color-border);
+      color: var(--color-text);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .info-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .info-row {
+      padding: 12px 0;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      font-size: 10px;
+    }
+
+    .info-row + .info-row {
+      border-top: 1px solid var(--color-border);
+    }
+
+    .info-row__label {
+      color: var(--color-text-soft);
+    }
+
+    .info-row__value {
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .analytics-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.6fr);
+      gap: 17px;
+      margin-bottom: 17px;
+    }
+
+    .line-chart {
+      height: 280px;
+      padding-top: 14px;
+      display: flex;
+      align-items: end;
+      gap: 5px;
+      background-image: linear-gradient(
+        to top,
+        transparent 19%,
+        #edf2f7 20%,
+        transparent 21%,
+        transparent 39%,
+        #edf2f7 40%,
+        transparent 41%,
+        transparent 59%,
+        #edf2f7 60%,
+        transparent 61%,
+        transparent 79%,
+        #edf2f7 80%,
+        transparent 81%
+      );
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .line-chart__column {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      align-items: end;
+    }
+
+    .line-chart__fill {
+      width: 100%;
+      min-height: 8px;
+      border-radius: 6px 6px 0 0;
+      background: linear-gradient(
+        to top,
+        rgba(37, 99, 235, 0.1),
+        rgba(96, 165, 250, 0.7)
+      );
+      border-top: 2px solid #2563eb;
+    }
+
+    .channel-list {
+      display: flex;
+      flex-direction: column;
+      gap: 17px;
+    }
+
+    .channel {
+      display: grid;
+      grid-template-columns: minmax(80px, 1fr) 2fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .channel__name {
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .channel__bar {
+      height: 7px;
+      background: #edf2f7;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .channel__bar span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #2563eb, #60a5fa);
+    }
+
+    .channel__value {
+      font-size: 10px;
+      font-weight: 650;
+      color: #475569;
+    }
+
+    .settings-layout {
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 17px;
+    }
+
+    .settings-nav {
+      padding: 10px;
+      align-self: start;
+    }
+
+    .settings-nav__item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 11px;
+      border-radius: 8px;
+      color: var(--color-text-soft);
+      font-size: 11px;
+    }
+
+    .settings-nav__item.is-active {
+      background: var(--color-primary-soft);
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .settings-nav__item svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    .settings-form {
+      padding: 22px;
+    }
+
+    .settings-form__section + .settings-form__section {
+      border-top: 1px solid var(--color-border);
+      margin-top: 26px;
+      padding-top: 25px;
+    }
+
+    .settings-form__heading {
+      margin-bottom: 18px;
+    }
+
+    .settings-form__heading h2 {
+      font-size: 13px;
+      margin: 0;
+    }
+
+    .settings-form__heading p {
+      color: var(--color-text-soft);
+      font-size: 10px;
+      margin: 5px 0 0;
+      line-height: 1.5;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 15px;
+    }
+
+    .form-grid .field--full {
+      grid-column: 1 / -1;
+    }
+
+    .form-actions {
+      margin-top: 21px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 9px;
+    }
+
+    .footer {
+      padding: 18px 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      color: var(--color-muted);
+      border-top: 1px solid var(--color-border);
+      background: rgba(255, 255, 255, 0.6);
+      font-size: 9px;
+    }
+
+    @media (max-width: 1100px) {
+      :root {
+        --sidebar-width: 210px;
+      }
+
+      .stat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .dashboard-grid,
+      .analytics-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .customer-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      [data-screen] {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        min-height: auto;
+        padding: 14px;
+      }
+
+      .sidebar__brand {
+        padding-bottom: 14px;
+      }
+
+      .sidebar__label,
+      .sidebar__upgrade,
+      .sidebar__user {
+        display: none;
+      }
+
+      .sidebar__nav {
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 6px;
+      }
+
+      .nav-item {
+        flex: 0 0 auto;
+        padding: 9px 11px;
+      }
+
+      .sidebar__spacer {
+        display: none;
+      }
+
+      .topbar {
+        padding: 0 17px;
+      }
+
+      .topbar__profile-copy {
+        display: none;
+      }
+
+      .topbar__search {
+        width: min(100%, 360px);
+      }
+
+      .content {
+        padding: 23px 17px 32px;
+      }
+
+      .page-heading {
+        flex-direction: column;
+      }
+
+      .stat-grid,
+      .customer-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .settings-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .settings-nav {
+        display: flex;
+        overflow-x: auto;
+      }
+
+      .settings-nav__item {
+        flex: 0 0 auto;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid .field--full {
+        grid-column: auto;
+      }
+
+      .footer {
+        padding: 17px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+
+  <style data-f2r="preview">
+    body {
+      background: #d8dee9;
+      padding: 42px;
+    }
+
+    [data-f2r="canvas"] {
+      display: grid;
+      grid-template-columns: repeat(2, 1440px);
+      gap: 42px;
+      align-items: start;
+    }
+
+    [data-screen] {
+      width: 1440px;
+      height: 920px;
+      min-height: 920px;
+      overflow: hidden;
+      border-radius: 14px;
+      box-shadow: 0 24px 65px rgba(30, 41, 59, 0.18);
+    }
+  </style>
+</head>
+
+<body>
+  <div data-f2r="canvas">
+
+    <section data-screen="dashboard" data-title="Dashboard" data-home>
+      <aside class="sidebar" data-component="Sidebar">
+        <div class="sidebar__brand">
+          <div class="sidebar__logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="white">
+              <path d="M5 17L10 12L13 15L19 8"/>
+              <path d="M15 8H19V12"/>
+            </svg>
+          </div>
+          <div class="sidebar__brand-text">
+            <span class="sidebar__brand-name">NexaFlow</span>
+            <span class="sidebar__brand-subtitle">Business OS</span>
+          </div>
+        </div>
+
+        <div class="sidebar__label">Workspace</div>
+
+        <nav class="sidebar__nav">
+          <a class="nav-item is-active" href="#dashboard" data-goto="dashboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="3" y="3" width="7" height="7" rx="2"/>
+              <rect x="14" y="3" width="7" height="7" rx="2"/>
+              <rect x="3" y="14" width="7" height="7" rx="2"/>
+              <rect x="14" y="14" width="7" height="7" rx="2"/>
+            </svg>
+            Dashboard
+          </a>
+
+          <a class="nav-item" href="#orders" data-goto="orders">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M6 7V5a3 3 0 0 1 6 0v2"/>
+              <path d="M3 7h18l-1 14H4L3 7Z"/>
+              <path d="M12 7V5a3 3 0 0 1 6 0v2"/>
+            </svg>
+            Orders
+          </a>
+
+          <a class="nav-item" href="#customers" data-goto="customers">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="9" cy="8" r="3"/>
+              <path d="M3 20v-2a6 6 0 0 1 12 0v2"/>
+              <circle cx="18" cy="9" r="2"/>
+              <path d="M17 15a5 5 0 0 1 4 5"/>
+            </svg>
+            Customers
+          </a>
+
+          <a class="nav-item" href="#analytics" data-goto="analytics">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M4 20V10"/>
+              <path d="M10 20V4"/>
+              <path d="M16 20v-7"/>
+              <path d="M22 20H2"/>
+            </svg>
+            Analytics
+          </a>
+
+          <a class="nav-item" href="#settings" data-goto="settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/>
+            </svg>
+            Settings
+          </a>
+        </nav>
+
+        <div class="sidebar__spacer"></div>
+
+        <div class="sidebar__upgrade">
+          <div class="sidebar__upgrade-title">NexaFlow Pro</div>
+          <p class="sidebar__upgrade-copy">Unlock advanced analytics, automations and team permissions.</p>
+          <a class="sidebar__upgrade-link" href="#settings" data-goto="settings">
+            View plans
+            <span>→</span>
+          </a>
+        </div>
+
+        <div class="sidebar__user">
+          <div class="avatar">LM</div>
+          <div>
+            <div class="sidebar__user-name">Liam Morgan</div>
+            <div class="sidebar__user-role">Administrator</div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="app">
+        <header class="topbar" data-component="Topbar">
+          <div class="topbar__search">
+            <label for="dashboard-search">Search</label>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="7"/>
+              <path d="m20 20-3.5-3.5"/>
+            </svg>
+            <input id="dashboard-search" type="search" placeholder="Search orders, customers, reports...">
+          </div>
+
+          <div class="topbar__actions">
+            <button class="icon-button" type="button" aria-label="Notifications">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                <path d="M10 21h4"/>
+              </svg>
+            </button>
+
+            <div class="topbar__profile">
+              <div class="avatar">LM</div>
+              <div class="topbar__profile-copy">
+                <div class="topbar__profile-name">Liam Morgan</div>
+                <div class="topbar__profile-role">Admin</div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="content">
+          <div class="page-heading">
+            <div>
+              <div class="page-heading__eyebrow">Thursday, October 22</div>
+              <h1>Good morning, Liam.</h1>
+              <p>Here is what is happening across your business today.</p>
+            </div>
+
+            <div class="page-heading__actions">
+              <button class="btn btn--secondary" type="button" data-goto="analytics">
+                View report
+              </button>
+              <button class="btn btn--primary" type="button" data-goto="orders">
+                View orders
+              </button>
+            </div>
+          </div>
+
+          <div class="stat-grid">
+            <article class="card stat-card">
+              <div class="stat-card__top">
+                <div class="stat-card__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M4 18V8"/>
+                    <path d="M10 18V4"/>
+                    <path d="M16 18v-6"/>
+                    <path d="M22 18H2"/>
+                  </svg>
+                </div>
+                <span class="stat-card__trend stat-card__trend--up">+12.4%</span>
+              </div>
+              <div class="stat-card__value">$84,280</div>
+              <div class="stat-card__label">Total revenue</div>
+            </article>
+
+            <article class="card stat-card">
+              <div class="stat-card__top">
+                <div class="stat-card__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M6 7V5a3 3 0 0 1 6 0v2"/>
+                    <path d="M3 7h18l-1 14H4L3 7Z"/>
+                  </svg>
+                </div>
+                <span class="stat-card__trend stat-card__trend--up">+8.1%</span>
+              </div>
+              <div class="stat-card__value">1,248</div>
+              <div class="stat-card__label">Orders this month</div>
+            </article>
+
+            <article class="card stat-card">
+              <div class="stat-card__top">
+                <div class="stat-card__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <circle cx="9" cy="8" r="3"/>
+                    <path d="M3 20v-2a6 6 0 0 1 12 0v2"/>
+                    <circle cx="18" cy="9" r="2"/>
+                  </svg>
+                </div>
+                <span class="stat-card__trend stat-card__trend--up">+16.9%</span>
+              </div>
+              <div class="stat-card__value">3,842</div>
+              <div class="stat-card__label">Active customers</div>
+            </article>
+
+            <article class="card stat-card">
+              <div class="stat-card__top">
+                <div class="stat-card__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="m4 12 5 5L20 6"/>
+                  </svg>
+                </div>
+                <span class="stat-card__trend stat-card__trend--down">-1.2%</span>
+              </div>
+              <div class="stat-card__value">4.8%</div>
+              <div class="stat-card__label">Conversion rate</div>
+            </article>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="card">
+              <div class="card__header">
+                <div>
+                  <h2 class="card__title">Revenue overview</h2>
+                  <p class="card__subtitle">Revenue compared with the previous 12 weeks</p>
+                </div>
+
+                <div class="chart__legend">
+                  <span class="chart__legend-item">
+                    <span class="chart__dot"></span>
+                    This year
+                  </span>
+                  <span class="chart__legend-item">
+                    <span class="chart__dot chart__dot--light"></span>
+                    Previous
+                  </span>
+                </div>
+              </div>
+
+              <div class="card__body chart">
+                <div class="bar-chart">
+                  <div class="bar-chart__group">
+                    <span class="bar-chart__bar" style="height: 42%;"></span>
+                    <span class="bar-chart__bar bar-chart__bar--secondary" style="height: 31%;"></span>
+                  </div>
+                  <div class="bar-chart__group">
+                    <span class="bar-chart__bar" style="height: 52%;"></span>
+                    <span class="bar-chart__bar bar-chart__bar--secondary" style="height: 38%;"></span>
+                  </div>
+                  <div class="bar-chart__group">
+                    <span class="bar-chart__bar" style="height: 48%;"></span>
+                    <span class="bar-chart__bar bar-chart__bar--secondary" style="height: 43%;"></span>
+                  </div>
+                  <div class="bar-chart__group">
+                    <span class="bar-chart__bar" style="height: 62%;"></span>
+                    <span class="bar-chart__bar bar-chart__bar--secondary" style="height: 46%;"></span>
+                  </div>
+                  <div class="bar-chart__group">
+                    <span class="bar-chart__bar" style="height: 58%;"></span>
+                    <span class="bar-chart__bar bar-chart__bar--secondary" style="height: 50%;"></span>
+                  </div>
+                  <div class="bar-chart__group">
+                    <span class="bar-chart__bar" style="height: 72%;"></span>
+                    <span class="bar-chart__bar bar-chart__bar--secondary" style="height: 55%;"></span>
+                  </div>
+                  <div class="bar-chart__group">
+                    <span class="bar-chart__bar" style="height: 65%;"></span>
+                    <span class="bar-chart__bar bar-chart__bar--secondary" style="height: 58%;"></span>
+                  </div>
+                  <div class="bar-chart__group">
+                    <span class="bar-chart__bar" style="height: 75%;"></span>
+                    <span class="bar-chart__bar bar-chart__bar--secondary" style="height: 60%;"></span>
+                  </div>
+                  <div class="bar-chart__group">
+                    <span class="bar-chart__bar" style="height: 82%;"></span>
+                    <span class="bar-chart__bar bar-chart__bar--secondary" style="height: 69%;"></span>
+                  </div>
+                  <div class="bar-chart__group">
+                    <span class="bar-chart__bar" style="height: 78%;"></span>
+                    <span class="bar-chart__bar bar-chart__bar--secondary" style="height: 65%;"></span>
+                  </div>
+                  <div class="bar-chart__group">
+                    <span class="bar-chart__bar" style="height: 88%;"></span>
+                    <span class="bar-chart__bar bar-chart__bar--secondary" style="height: 72%;"></span>
+                  </div>
+                  <div class="bar-chart__group">
+                    <span class="bar-chart__bar" style="height: 94%;"></span>
+                    <span class="bar-chart__bar bar-chart__bar--secondary" style="height: 77%;"></span>
+                  </div>
+                </div>
+
+                <div class="bar-chart__labels">
+                  <span>W1</span><span>W2</span><span>W3</span><span>W4</span>
+                  <span>W5</span><span>W6</span><span>W7</span><span>W8</span>
+                  <span>W9</span><span>W10</span><span>W11</span><span>W12</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card__header">
+                <div>
+                  <h2 class="card__title">Recent activity</h2>
+                  <p class="card__subtitle">Latest changes in your workspace</p>
+                </div>
+              </div>
+
+              <div class="card__body activity-list">
+                <div class="activity-item">
+                  <div class="activity-item__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="m4 12 5 5L20 6"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="activity-item__text"><strong>Order #NF-8421</strong> was completed.</div>
+                    <div class="activity-item__time">6 minutes ago</div>
+                  </div>
+                </div>
+
+                <div class="activity-item">
+                  <div class="activity-item__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="8" r="3"/>
+                      <path d="M5 21v-2a7 7 0 0 1 14 0v2"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="activity-item__text"><strong>Sophia Reed</strong> created a customer account.</div>
+                    <div class="activity-item__time">18 minutes ago</div>
+                  </div>
+                </div>
+
+                <div class="activity-item">
+                  <div class="activity-item__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M4 19V9"/>
+                      <path d="M10 19V5"/>
+                      <path d="M16 19v-7"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="activity-item__text">Monthly revenue passed <strong>$80K</strong>.</div>
+                    <div class="activity-item__time">1 hour ago</div>
+                  </div>
+                </div>
+
+                <div class="activity-item">
+                  <div class="activity-item__icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M6 7h12"/>
+                      <path d="M6 12h12"/>
+                      <path d="M6 17h7"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div class="activity-item__text"><strong>12 new orders</strong> are awaiting fulfillment.</div>
+                    <div class="activity-item__time">2 hours ago</div>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <article class="card table-card">
+            <div class="card__header">
+              <div>
+                <h2 class="card__title">Recent orders</h2>
+                <p class="card__subtitle">Latest customer purchases across all channels</p>
+              </div>
+              <button type="button" class="btn btn--secondary btn--small" data-goto="orders">View all</button>
+            </div>
+
+            <div class="table-scroll">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Order</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>#NF-8421</td>
+                    <td>
+                      <div class="customer-cell">
+                        <div class="customer-cell__avatar">SR</div>
+                        <div>
+                          <div class="customer-cell__name">Sophia Reed</div>
+                          <div class="customer-cell__email">sophia@northstar.io</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>Oct 22, 2026</td>
+                    <td><span class="badge badge--success">Completed</span></td>
+                    <td class="money">$428.00</td>
+                    <td><button class="link-button" type="button" data-goto="order-details">View</button></td>
+                  </tr>
+
+                  <tr>
+                    <td>#NF-8420</td>
+                    <td>
+                      <div class="customer-cell">
+                        <div class="customer-cell__avatar">JM</div>
+                        <div>
+                          <div class="customer-cell__name">James Miller</div>
+                          <div class="customer-cell__email">james@brightlabs.co</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>Oct 22, 2026</td>
+                    <td><span class="badge badge--warning">Processing</span></td>
+                    <td class="money">$186.50</td>
+                    <td><button class="link-button" type="button" data-goto="order-details">View</button></td>
+                  </tr>
+
+                  <tr>
+                    <td>#NF-8419</td>
+                    <td>
+                      <div class="customer-cell">
+                        <div class="customer-cell__avatar">AK</div>
+                        <div>
+                          <div class="customer-cell__name">Amelia Kim</div>
+                          <div class="customer-cell__email">amelia@radius.studio</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>Oct 21, 2026</td>
+                    <td><span class="badge badge--info">Shipped</span></td>
+                    <td class="money">$764.20</td>
+                    <td><button class="link-button" type="button" data-goto="order-details">View</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+        </main>
+
+        <footer class="footer" data-component="Footer">
+          <span>© 2026 NexaFlow. All rights reserved.</span>
+          <span>Secure workspace · System operational</span>
+        </footer>
+      </div>
+    </section>
+
+    <section data-screen="orders" data-title="Orders">
+      <aside class="sidebar" data-component="Sidebar">
+        <div class="sidebar__brand">
+          <div class="sidebar__logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="white">
+              <path d="M5 17L10 12L13 15L19 8"/>
+              <path d="M15 8H19V12"/>
+            </svg>
+          </div>
+          <div class="sidebar__brand-text">
+            <span class="sidebar__brand-name">NexaFlow</span>
+            <span class="sidebar__brand-subtitle">Business OS</span>
+          </div>
+        </div>
+
+        <div class="sidebar__label">Workspace</div>
+
+        <nav class="sidebar__nav">
+          <a class="nav-item" href="#dashboard" data-goto="dashboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="3" y="3" width="7" height="7" rx="2"/>
+              <rect x="14" y="3" width="7" height="7" rx="2"/>
+              <rect x="3" y="14" width="7" height="7" rx="2"/>
+              <rect x="14" y="14" width="7" height="7" rx="2"/>
+            </svg>
+            Dashboard
+          </a>
+
+          <a class="nav-item is-active" href="#orders" data-goto="orders">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M6 7V5a3 3 0 0 1 6 0v2"/>
+              <path d="M3 7h18l-1 14H4L3 7Z"/>
+              <path d="M12 7V5a3 3 0 0 1 6 0v2"/>
+            </svg>
+            Orders
+          </a>
+
+          <a class="nav-item" href="#customers" data-goto="customers">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="9" cy="8" r="3"/>
+              <path d="M3 20v-2a6 6 0 0 1 12 0v2"/>
+              <circle cx="18" cy="9" r="2"/>
+              <path d="M17 15a5 5 0 0 1 4 5"/>
+            </svg>
+            Customers
+          </a>
+
+          <a class="nav-item" href="#analytics" data-goto="analytics">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M4 20V10"/>
+              <path d="M10 20V4"/>
+              <path d="M16 20v-7"/>
+              <path d="M22 20H2"/>
+            </svg>
+            Analytics
+          </a>
+
+          <a class="nav-item" href="#settings" data-goto="settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/>
+            </svg>
+            Settings
+          </a>
+        </nav>
+
+        <div class="sidebar__spacer"></div>
+
+        <div class="sidebar__upgrade">
+          <div class="sidebar__upgrade-title">NexaFlow Pro</div>
+          <p class="sidebar__upgrade-copy">Unlock advanced analytics, automations and team permissions.</p>
+          <a class="sidebar__upgrade-link" href="#settings" data-goto="settings">
+            View plans
+            <span>→</span>
+          </a>
+        </div>
+
+        <div class="sidebar__user">
+          <div class="avatar">LM</div>
+          <div>
+            <div class="sidebar__user-name">Liam Morgan</div>
+            <div class="sidebar__user-role">Administrator</div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="app">
+        <header class="topbar" data-component="Topbar">
+          <div class="topbar__search">
+            <label for="orders-search">Search</label>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="7"/>
+              <path d="m20 20-3.5-3.5"/>
+            </svg>
+            <input id="orders-search" type="search" placeholder="Search orders, customers, reports...">
+          </div>
+
+          <div class="topbar__actions">
+            <button class="icon-button" type="button" aria-label="Notifications">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                <path d="M10 21h4"/>
+              </svg>
+            </button>
+
+            <div class="topbar__profile">
+              <div class="avatar">LM</div>
+              <div class="topbar__profile-copy">
+                <div class="topbar__profile-name">Liam Morgan</div>
+                <div class="topbar__profile-role">Admin</div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="content">
+          <div class="page-heading">
+            <div>
+              <div class="page-heading__eyebrow">Commerce</div>
+              <h1>Orders</h1>
+              <p>Track, review and manage customer orders from one place.</p>
+            </div>
+
+            <div class="page-heading__actions">
+              <button class="btn btn--secondary" type="button">Export CSV</button>
+              <button class="btn btn--primary" type="button">Create order</button>
+            </div>
+          </div>
+
+          <div class="stat-grid">
+            <article class="card stat-card">
+              <div class="stat-card__top">
+                <div class="stat-card__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M4 6h16"/>
+                    <path d="M6 6v14h12V6"/>
+                  </svg>
+                </div>
+                <span class="stat-card__trend stat-card__trend--up">+8.1%</span>
+              </div>
+              <div class="stat-card__value">1,248</div>
+              <div class="stat-card__label">Total orders</div>
+            </article>
+
+            <article class="card stat-card">
+              <div class="stat-card__top">
+                <div class="stat-card__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <circle cx="12" cy="12" r="9"/>
+                    <path d="M12 7v5l3 2"/>
+                  </svg>
+                </div>
+                <span class="stat-card__trend stat-card__trend--up">+14</span>
+              </div>
+              <div class="stat-card__value">46</div>
+              <div class="stat-card__label">Processing</div>
+            </article>
+
+            <article class="card stat-card">
+              <div class="stat-card__top">
+                <div class="stat-card__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="m4 12 5 5L20 6"/>
+                  </svg>
+                </div>
+                <span class="stat-card__trend stat-card__trend--up">+5.6%</span>
+              </div>
+              <div class="stat-card__value">1,132</div>
+              <div class="stat-card__label">Completed</div>
+            </article>
+
+            <article class="card stat-card">
+              <div class="stat-card__top">
+                <div class="stat-card__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M12 2v20"/>
+                    <path d="M17 6H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6"/>
+                  </svg>
+                </div>
+                <span class="stat-card__trend stat-card__trend--up">+12.4%</span>
+              </div>
+              <div class="stat-card__value">$84K</div>
+              <div class="stat-card__label">Gross sales</div>
+            </article>
+          </div>
+
+          <article class="card table-card">
+            <div class="table-toolbar">
+              <div class="table-toolbar__group">
+                <label for="order-filter-search" hidden>Search orders</label>
+                <input class="toolbar-input" id="order-filter-search" type="search" placeholder="Search order or customer">
+
+                <label for="order-status" hidden>Status</label>
+                <select class="toolbar-select" id="order-status">
+                  <option>All statuses</option>
+                  <option>Processing</option>
+                  <option>Shipped</option>
+                  <option>Completed</option>
+                </select>
+              </div>
+
+              <div class="table-toolbar__group">
+                <span class="badge badge--neutral">1,248 orders</span>
+              </div>
+            </div>
+
+            <div class="table-scroll">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Order</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th></th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr>
+                    <td>#NF-8421</td>
+                    <td>
+                      <div class="customer-cell">
+                        <div class="customer-cell__avatar">SR</div>
+                        <div>
+                          <div class="customer-cell__name">Sophia Reed</div>
+                          <div class="customer-cell__email">sophia@northstar.io</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>Oct 22, 2026</td>
+                    <td>Visa •••• 2842</td>
+                    <td><span class="badge badge--success">Completed</span></td>
+                    <td class="money">$428.00</td>
+                    <td><button class="link-button" type="button" data-goto="order-details">View</button></td>
+                  </tr>
+
+                  <tr>
+                    <td>#NF-8420</td>
+                    <td>
+                      <div class="customer-cell">
+                        <div class="customer-cell__avatar">JM</div>
+                        <div>
+                          <div class="customer-cell__name">James Miller</div>
+                          <div class="customer-cell__email">james@brightlabs.co</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>Oct 22, 2026</td>
+                    <td>Mastercard •••• 9012</td>
+                    <td><span class="badge badge--warning">Processing</span></td>
+                    <td class="money">$186.50</td>
+                    <td><button class="link-button" type="button" data-goto="order-details">View</button></td>
+                  </tr>
+
+                  <tr>
+                    <td>#NF-8419</td>
+                    <td>
+                      <div class="customer-cell">
+                        <div class="customer-cell__avatar">AK</div>
+                        <div>
+                          <div class="customer-cell__name">Amelia Kim</div>
+                          <div class="customer-cell__email">amelia@radius.studio</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>Oct 21, 2026</td>
+                    <td>Visa •••• 4421</td>
+                    <td><span class="badge badge--info">Shipped</span></td>
+                    <td class="money">$764.20</td>
+                    <td><button class="link-button" type="button" data-goto="order-details">View</button></td>
+                  </tr>
+
+                  <tr>
+                    <td>#NF-8418</td>
+                    <td>
+                      <div class="customer-cell">
+                        <div class="customer-cell__avatar">ED</div>
+                        <div>
+                          <div class="customer-cell__name">Ethan Davis</div>
+                          <div class="customer-cell__email">ethan@linecraft.com</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>Oct 21, 2026</td>
+                    <td>Visa •••• 3390</td>
+                    <td><span class="badge badge--success">Completed</span></td>
+                    <td class="money">$320.00</td>
+                    <td><button class="link-button" type="button" data-goto="order-details">View</button></td>
+                  </tr>
+
+                  <tr>
+                    <td>#NF-8417</td>
+                    <td>
+                      <div class="customer-cell">
+                        <div class="customer-cell__avatar">OL</div>
+                        <div>
+                          <div class="customer-cell__name">Olivia Lee</div>
+                          <div class="customer-cell__email">olivia@apexmedia.io</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>Oct 20, 2026</td>
+                    <td>PayPal</td>
+                    <td><span class="badge badge--success">Completed</span></td>
+                    <td class="money">$248.90</td>
+                    <td><button class="link-button" type="button" data-goto="order-details">View</button></td>
+                  </tr>
+
+                  <tr>
+                    <td>#NF-8416</td>
+                    <td>
+                      <div class="customer-cell">
+                        <div class="customer-cell__avatar">NC</div>
+                        <div>
+                          <div class="customer-cell__name">Noah Carter</div>
+                          <div class="customer-cell__email">noah@motionhq.com</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>Oct 20, 2026</td>
+                    <td>Mastercard •••• 8872</td>
+                    <td><span class="badge badge--warning">Processing</span></td>
+                    <td class="money">$589.40</td>
+                    <td><button class="link-button" type="button" data-goto="order-details">View</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pagination">
+              <span>Showing 1–6 of 1,248 orders</span>
+              <div class="pagination__pages">
+                <button class="pagination__button" type="button">‹</button>
+                <button class="pagination__button is-active" type="button">1</button>
+                <button class="pagination__button" type="button">2</button>
+                <button class="pagination__button" type="button">3</button>
+                <button class="pagination__button" type="button">›</button>
+              </div>
+            </div>
+          </article>
+        </main>
+
+        <footer class="footer" data-component="Footer">
+          <span>© 2026 NexaFlow. All rights reserved.</span>
+          <span>Secure workspace · System operational</span>
+        </footer>
+      </div>
+    </section>
+
+    <section data-screen="order-details" data-title="Order Details">
+      <aside class="sidebar" data-component="Sidebar">
+        <div class="sidebar__brand">
+          <div class="sidebar__logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="white">
+              <path d="M5 17L10 12L13 15L19 8"/>
+              <path d="M15 8H19V12"/>
+            </svg>
+          </div>
+          <div class="sidebar__brand-text">
+            <span class="sidebar__brand-name">NexaFlow</span>
+            <span class="sidebar__brand-subtitle">Business OS</span>
+          </div>
+        </div>
+
+        <div class="sidebar__label">Workspace</div>
+
+        <nav class="sidebar__nav">
+          <a class="nav-item" href="#dashboard" data-goto="dashboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="3" y="3" width="7" height="7" rx="2"/>
+              <rect x="14" y="3" width="7" height="7" rx="2"/>
+              <rect x="3" y="14" width="7" height="7" rx="2"/>
+              <rect x="14" y="14" width="7" height="7" rx="2"/>
+            </svg>
+            Dashboard
+          </a>
+
+          <a class="nav-item is-active" href="#orders" data-goto="orders">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M6 7V5a3 3 0 0 1 6 0v2"/>
+              <path d="M3 7h18l-1 14H4L3 7Z"/>
+              <path d="M12 7V5a3 3 0 0 1 6 0v2"/>
+            </svg>
+            Orders
+          </a>
+
+          <a class="nav-item" href="#customers" data-goto="customers">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="9" cy="8" r="3"/>
+              <path d="M3 20v-2a6 6 0 0 1 12 0v2"/>
+              <circle cx="18" cy="9" r="2"/>
+              <path d="M17 15a5 5 0 0 1 4 5"/>
+            </svg>
+            Customers
+          </a>
+
+          <a class="nav-item" href="#analytics" data-goto="analytics">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M4 20V10"/>
+              <path d="M10 20V4"/>
+              <path d="M16 20v-7"/>
+              <path d="M22 20H2"/>
+            </svg>
+            Analytics
+          </a>
+
+          <a class="nav-item" href="#settings" data-goto="settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/>
+            </svg>
+            Settings
+          </a>
+        </nav>
+
+        <div class="sidebar__spacer"></div>
+
+        <div class="sidebar__upgrade">
+          <div class="sidebar__upgrade-title">NexaFlow Pro</div>
+          <p class="sidebar__upgrade-copy">Unlock advanced analytics, automations and team permissions.</p>
+          <a class="sidebar__upgrade-link" href="#settings" data-goto="settings">
+            View plans
+            <span>→</span>
+          </a>
+        </div>
+
+        <div class="sidebar__user">
+          <div class="avatar">LM</div>
+          <div>
+            <div class="sidebar__user-name">Liam Morgan</div>
+            <div class="sidebar__user-role">Administrator</div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="app">
+        <header class="topbar" data-component="Topbar">
+          <div class="topbar__search">
+            <label for="order-details-search">Search</label>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="7"/>
+              <path d="m20 20-3.5-3.5"/>
+            </svg>
+            <input id="order-details-search" type="search" placeholder="Search orders, customers, reports...">
+          </div>
+
+          <div class="topbar__actions">
+            <button class="icon-button" type="button" aria-label="Notifications">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                <path d="M10 21h4"/>
+              </svg>
+            </button>
+
+            <div class="topbar__profile">
+              <div class="avatar">LM</div>
+              <div class="topbar__profile-copy">
+                <div class="topbar__profile-name">Liam Morgan</div>
+                <div class="topbar__profile-role">Admin</div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="content">
+          <div class="page-heading">
+            <div>
+              <div class="page-heading__eyebrow">Orders / #NF-8421</div>
+              <h1>Order details</h1>
+              <p>Review payment, customer, shipping and fulfillment information.</p>
+            </div>
+
+            <div class="page-heading__actions">
+              <button class="btn btn--secondary" type="button" data-goto="orders">Back to orders</button>
+              <button class="btn btn--primary" type="button">Print invoice</button>
+            </div>
+          </div>
+
+          <article class="card order-header">
+            <div>
+              <div class="order-header__number">Order #NF-8421</div>
+              <div class="order-header__meta">Placed October 22, 2026 at 09:42 AM</div>
+            </div>
+            <span class="badge badge--success">Completed</span>
+          </article>
+
+          <div class="details-grid" style="margin-top: 17px;">
+            <div>
+              <article class="card">
+                <div class="card__header">
+                  <div>
+                    <h2 class="card__title">Order items</h2>
+                    <p class="card__subtitle">3 items purchased</p>
+                  </div>
+                </div>
+
+                <div class="card__body">
+                  <div class="product-line">
+                    <div class="product-line__image">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <rect x="4" y="4" width="16" height="16" rx="3"/>
+                        <path d="M8 9h8"/>
+                        <path d="M8 13h5"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <div class="product-line__title">NexaDesk Pro License</div>
+                      <div class="product-line__meta">Annual subscription · Qty 1</div>
+                    </div>
+                    <div class="product-line__price">$249.00</div>
+                  </div>
+
+                  <div class="product-line">
+                    <div class="product-line__image">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <circle cx="12" cy="12" r="8"/>
+                        <path d="M12 8v8"/>
+                        <path d="M8 12h8"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <div class="product-line__title">Automation Pack</div>
+                      <div class="product-line__meta">Add-on · Qty 1</div>
+                    </div>
+                    <div class="product-line__price">$99.00</div>
+                  </div>
+
+                  <div class="product-line">
+                    <div class="product-line__image">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M5 18 12 5l7 13H5Z"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <div class="product-line__title">Priority Support</div>
+                      <div class="product-line__meta">12 months · Qty 1</div>
+                    </div>
+                    <div class="product-line__price">$60.00</div>
+                  </div>
+
+                  <div class="totals">
+                    <div class="totals__row">
+                      <span>Subtotal</span>
+                      <span>$408.00</span>
+                    </div>
+                    <div class="totals__row">
+                      <span>Tax</span>
+                      <span>$20.00</span>
+                    </div>
+                    <div class="totals__row totals__row--final">
+                      <span>Total</span>
+                      <span>$428.00</span>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <div>
+              <article class="card">
+                <div class="card__header">
+                  <div>
+                    <h2 class="card__title">Customer</h2>
+                    <p class="card__subtitle">Billing contact</p>
+                  </div>
+                </div>
+
+                <div class="card__body">
+                  <div class="customer-cell">
+                    <div class="customer-cell__avatar">SR</div>
+                    <div>
+                      <div class="customer-cell__name">Sophia Reed</div>
+                      <div class="customer-cell__email">sophia@northstar.io</div>
+                    </div>
+                  </div>
+
+                  <div class="info-list" style="margin-top: 15px;">
+                    <div class="info-row">
+                      <span class="info-row__label">Company</span>
+                      <span class="info-row__value">Northstar Labs</span>
+                    </div>
+                    <div class="info-row">
+                      <span class="info-row__label">Phone</span>
+                      <span class="info-row__value">+1 415 555 0138</span>
+                    </div>
+                    <div class="info-row">
+                      <span class="info-row__label">Country</span>
+                      <span class="info-row__value">United States</span>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              <article class="card" style="margin-top: 17px;">
+                <div class="card__header">
+                  <div>
+                    <h2 class="card__title">Payment</h2>
+                    <p class="card__subtitle">Payment captured successfully</p>
+                  </div>
+                </div>
+
+                <div class="card__body info-list">
+                  <div class="info-row">
+                    <span class="info-row__label">Method</span>
+                    <span class="info-row__value">Visa •••• 2842</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-row__label">Transaction</span>
+                    <span class="info-row__value">TXN-938451</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-row__label">Status</span>
+                    <span class="badge badge--success">Paid</span>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </main>
+
+        <footer class="footer" data-component="Footer">
+          <span>© 2026 NexaFlow. All rights reserved.</span>
+          <span>Secure workspace · System operational</span>
+        </footer>
+      </div>
+    </section>
+
+    <section data-screen="customers" data-title="Customers">
+      <aside class="sidebar" data-component="Sidebar">
+        <div class="sidebar__brand">
+          <div class="sidebar__logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="white">
+              <path d="M5 17L10 12L13 15L19 8"/>
+              <path d="M15 8H19V12"/>
+            </svg>
+          </div>
+          <div class="sidebar__brand-text">
+            <span class="sidebar__brand-name">NexaFlow</span>
+            <span class="sidebar__brand-subtitle">Business OS</span>
+          </div>
+        </div>
+
+        <div class="sidebar__label">Workspace</div>
+
+        <nav class="sidebar__nav">
+          <a class="nav-item" href="#dashboard" data-goto="dashboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="3" y="3" width="7" height="7" rx="2"/>
+              <rect x="14" y="3" width="7" height="7" rx="2"/>
+              <rect x="3" y="14" width="7" height="7" rx="2"/>
+              <rect x="14" y="14" width="7" height="7" rx="2"/>
+            </svg>
+            Dashboard
+          </a>
+
+          <a class="nav-item" href="#orders" data-goto="orders">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M6 7V5a3 3 0 0 1 6 0v2"/>
+              <path d="M3 7h18l-1 14H4L3 7Z"/>
+              <path d="M12 7V5a3 3 0 0 1 6 0v2"/>
+            </svg>
+            Orders
+          </a>
+
+          <a class="nav-item is-active" href="#customers" data-goto="customers">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="9" cy="8" r="3"/>
+              <path d="M3 20v-2a6 6 0 0 1 12 0v2"/>
+              <circle cx="18" cy="9" r="2"/>
+              <path d="M17 15a5 5 0 0 1 4 5"/>
+            </svg>
+            Customers
+          </a>
+
+          <a class="nav-item" href="#analytics" data-goto="analytics">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M4 20V10"/>
+              <path d="M10 20V4"/>
+              <path d="M16 20v-7"/>
+              <path d="M22 20H2"/>
+            </svg>
+            Analytics
+          </a>
+
+          <a class="nav-item" href="#settings" data-goto="settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/>
+            </svg>
+            Settings
+          </a>
+        </nav>
+
+        <div class="sidebar__spacer"></div>
+
+        <div class="sidebar__upgrade">
+          <div class="sidebar__upgrade-title">NexaFlow Pro</div>
+          <p class="sidebar__upgrade-copy">Unlock advanced analytics, automations and team permissions.</p>
+          <a class="sidebar__upgrade-link" href="#settings" data-goto="settings">
+            View plans
+            <span>→</span>
+          </a>
+        </div>
+
+        <div class="sidebar__user">
+          <div class="avatar">LM</div>
+          <div>
+            <div class="sidebar__user-name">Liam Morgan</div>
+            <div class="sidebar__user-role">Administrator</div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="app">
+        <header class="topbar" data-component="Topbar">
+          <div class="topbar__search">
+            <label for="customers-search">Search</label>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="7"/>
+              <path d="m20 20-3.5-3.5"/>
+            </svg>
+            <input id="customers-search" type="search" placeholder="Search orders, customers, reports...">
+          </div>
+
+          <div class="topbar__actions">
+            <button class="icon-button" type="button" aria-label="Notifications">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                <path d="M10 21h4"/>
+              </svg>
+            </button>
+
+            <div class="topbar__profile">
+              <div class="avatar">LM</div>
+              <div class="topbar__profile-copy">
+                <div class="topbar__profile-name">Liam Morgan</div>
+                <div class="topbar__profile-role">Admin</div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="content">
+          <div class="page-heading">
+            <div>
+              <div class="page-heading__eyebrow">CRM</div>
+              <h1>Customers</h1>
+              <p>Understand your audience, lifetime value and recent purchasing activity.</p>
+            </div>
+
+            <div class="page-heading__actions">
+              <button class="btn btn--secondary" type="button">Export customers</button>
+              <button class="btn btn--primary" type="button">Add customer</button>
+            </div>
+          </div>
+
+          <div class="customer-summary">
+            <article class="card summary-profile">
+              <div class="avatar">SR</div>
+              <div>
+                <div class="summary-profile__name">Sophia Reed</div>
+                <div class="summary-profile__email">Top customer this month</div>
+                <div class="summary-profile__meta">
+                  <span class="badge badge--success">Active</span>
+                  <span class="badge badge--info">VIP</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="card summary-mini">
+              <div class="summary-mini__label">Total customers</div>
+              <div class="summary-mini__value">3,842</div>
+            </article>
+
+            <article class="card summary-mini">
+              <div class="summary-mini__label">New this month</div>
+              <div class="summary-mini__value">284</div>
+            </article>
+
+            <article class="card summary-mini">
+              <div class="summary-mini__label">Avg. lifetime value</div>
+              <div class="summary-mini__value">$642</div>
+            </article>
+          </div>
+
+          <article class="card table-card">
+            <div class="table-toolbar">
+              <div class="table-toolbar__group">
+                <label for="customer-table-search" hidden>Search customers</label>
+                <input class="toolbar-input" id="customer-table-search" type="search" placeholder="Search name or email">
+
+                <label for="customer-status" hidden>Status</label>
+                <select class="toolbar-select" id="customer-status">
+                  <option>All customers</option>
+                  <option>Active</option>
+                  <option>VIP</option>
+                  <option>Inactive</option>
+                </select>
+              </div>
+
+              <span class="badge badge--neutral">3,842 customers</span>
+            </div>
+
+            <div class="table-scroll">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Customer</th>
+                    <th>Company</th>
+                    <th>Orders</th>
+                    <th>Total spent</th>
+                    <th>Last order</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr>
+                    <td>
+                      <div class="customer-cell">
+                        <div class="customer-cell__avatar">SR</div>
+                        <div>
+                          <div class="customer-cell__name">Sophia Reed</div>
+                          <div class="customer-cell__email">sophia@northstar.io</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>Northstar Labs</td>
+                    <td>28</td>
+                    <td class="money">$14,820</td>
+                    <td>Oct 22, 2026</td>
+                    <td><span class="badge badge--success">Active</span></td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div class="customer-cell">
+                        <div class="customer-cell__avatar">JM</div>
+                        <div>
+                          <div class="customer-cell__name">James Miller</div>
+                          <div class="customer-cell__email">james@brightlabs.co</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>Bright Labs</td>
+                    <td>19</td>
+                    <td class="money">$9,410</td>
+                    <td>Oct 22, 2026</td>
+                    <td><span class="badge badge--success">Active</span></td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div class="customer-cell">
+                        <div class="customer-cell__avatar">AK</div>
+                        <div>
+                          <div class="customer-cell__name">Amelia Kim</div>
+                          <div class="customer-cell__email">amelia@radius.studio</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>Radius Studio</td>
+                    <td>13</td>
+                    <td class="money">$7,282</td>
+                    <td>Oct 21, 2026</td>
+                    <td><span class="badge badge--info">VIP</span></td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div class="customer-cell">
+                        <div class="customer-cell__avatar">ED</div>
+                        <div>
+                          <div class="customer-cell__name">Ethan Davis</div>
+                          <div class="customer-cell__email">ethan@linecraft.com</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>Linecraft</td>
+                    <td>11</td>
+                    <td class="money">$5,924</td>
+                    <td>Oct 21, 2026</td>
+                    <td><span class="badge badge--success">Active</span></td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <div class="customer-cell">
+                        <div class="customer-cell__avatar">OL</div>
+                        <div>
+                          <div class="customer-cell__name">Olivia Lee</div>
+                          <div class="customer-cell__email">olivia@apexmedia.io</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>Apex Media</td>
+                    <td>9</td>
+                    <td class="money">$4,880</td>
+                    <td>Oct 20, 2026</td>
+                    <td><span class="badge badge--success">Active</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pagination">
+              <span>Showing 1–5 of 3,842 customers</span>
+              <div class="pagination__pages">
+                <button class="pagination__button" type="button">‹</button>
+                <button class="pagination__button is-active" type="button">1</button>
+                <button class="pagination__button" type="button">2</button>
+                <button class="pagination__button" type="button">3</button>
+                <button class="pagination__button" type="button">›</button>
+              </div>
+            </div>
+          </article>
+        </main>
+
+        <footer class="footer" data-component="Footer">
+          <span>© 2026 NexaFlow. All rights reserved.</span>
+          <span>Secure workspace · System operational</span>
+        </footer>
+      </div>
+    </section>
+
+    <section data-screen="analytics" data-title="Analytics">
+      <aside class="sidebar" data-component="Sidebar">
+        <div class="sidebar__brand">
+          <div class="sidebar__logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="white">
+              <path d="M5 17L10 12L13 15L19 8"/>
+              <path d="M15 8H19V12"/>
+            </svg>
+          </div>
+          <div class="sidebar__brand-text">
+            <span class="sidebar__brand-name">NexaFlow</span>
+            <span class="sidebar__brand-subtitle">Business OS</span>
+          </div>
+        </div>
+
+        <div class="sidebar__label">Workspace</div>
+
+        <nav class="sidebar__nav">
+          <a class="nav-item" href="#dashboard" data-goto="dashboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="3" y="3" width="7" height="7" rx="2"/>
+              <rect x="14" y="3" width="7" height="7" rx="2"/>
+              <rect x="3" y="14" width="7" height="7" rx="2"/>
+              <rect x="14" y="14" width="7" height="7" rx="2"/>
+            </svg>
+            Dashboard
+          </a>
+
+          <a class="nav-item" href="#orders" data-goto="orders">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M6 7V5a3 3 0 0 1 6 0v2"/>
+              <path d="M3 7h18l-1 14H4L3 7Z"/>
+              <path d="M12 7V5a3 3 0 0 1 6 0v2"/>
+            </svg>
+            Orders
+          </a>
+
+          <a class="nav-item" href="#customers" data-goto="customers">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="9" cy="8" r="3"/>
+              <path d="M3 20v-2a6 6 0 0 1 12 0v2"/>
+              <circle cx="18" cy="9" r="2"/>
+              <path d="M17 15a5 5 0 0 1 4 5"/>
+            </svg>
+            Customers
+          </a>
+
+          <a class="nav-item is-active" href="#analytics" data-goto="analytics">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M4 20V10"/>
+              <path d="M10 20V4"/>
+              <path d="M16 20v-7"/>
+              <path d="M22 20H2"/>
+            </svg>
+            Analytics
+          </a>
+
+          <a class="nav-item" href="#settings" data-goto="settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/>
+            </svg>
+            Settings
+          </a>
+        </nav>
+
+        <div class="sidebar__spacer"></div>
+
+        <div class="sidebar__upgrade">
+          <div class="sidebar__upgrade-title">NexaFlow Pro</div>
+          <p class="sidebar__upgrade-copy">Unlock advanced analytics, automations and team permissions.</p>
+          <a class="sidebar__upgrade-link" href="#settings" data-goto="settings">
+            View plans
+            <span>→</span>
+          </a>
+        </div>
+
+        <div class="sidebar__user">
+          <div class="avatar">LM</div>
+          <div>
+            <div class="sidebar__user-name">Liam Morgan</div>
+            <div class="sidebar__user-role">Administrator</div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="app">
+        <header class="topbar" data-component="Topbar">
+          <div class="topbar__search">
+            <label for="analytics-search">Search</label>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="7"/>
+              <path d="m20 20-3.5-3.5"/>
+            </svg>
+            <input id="analytics-search" type="search" placeholder="Search orders, customers, reports...">
+          </div>
+
+          <div class="topbar__actions">
+            <button class="icon-button" type="button" aria-label="Notifications">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                <path d="M10 21h4"/>
+              </svg>
+            </button>
+
+            <div class="topbar__profile">
+              <div class="avatar">LM</div>
+              <div class="topbar__profile-copy">
+                <div class="topbar__profile-name">Liam Morgan</div>
+                <div class="topbar__profile-role">Admin</div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="content">
+          <div class="page-heading">
+            <div>
+              <div class="page-heading__eyebrow">Performance</div>
+              <h1>Analytics</h1>
+              <p>Monitor revenue, acquisition and conversion performance.</p>
+            </div>
+
+            <div class="page-heading__actions">
+              <button class="btn btn--secondary" type="button">Last 30 days</button>
+              <button class="btn btn--primary" type="button">Export report</button>
+            </div>
+          </div>
+
+          <div class="stat-grid">
+            <article class="card stat-card">
+              <div class="stat-card__top">
+                <div class="stat-card__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M4 18V8"/>
+                    <path d="M10 18V4"/>
+                    <path d="M16 18v-6"/>
+                    <path d="M22 18H2"/>
+                  </svg>
+                </div>
+                <span class="stat-card__trend stat-card__trend--up">+12.4%</span>
+              </div>
+              <div class="stat-card__value">$84,280</div>
+              <div class="stat-card__label">Net revenue</div>
+            </article>
+
+            <article class="card stat-card">
+              <div class="stat-card__top">
+                <div class="stat-card__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <circle cx="12" cy="12" r="8"/>
+                    <path d="m12 8 3 4-3 4"/>
+                  </svg>
+                </div>
+                <span class="stat-card__trend stat-card__trend--up">+9.2%</span>
+              </div>
+              <div class="stat-card__value">41.8K</div>
+              <div class="stat-card__label">Website sessions</div>
+            </article>
+
+            <article class="card stat-card">
+              <div class="stat-card__top">
+                <div class="stat-card__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="m4 12 5 5L20 6"/>
+                  </svg>
+                </div>
+                <span class="stat-card__trend stat-card__trend--up">+0.6%</span>
+              </div>
+              <div class="stat-card__value">4.8%</div>
+              <div class="stat-card__label">Conversion rate</div>
+            </article>
+
+            <article class="card stat-card">
+              <div class="stat-card__top">
+                <div class="stat-card__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M12 2v20"/>
+                    <path d="M17 6H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6"/>
+                  </svg>
+                </div>
+                <span class="stat-card__trend stat-card__trend--up">+4.1%</span>
+              </div>
+              <div class="stat-card__value">$67.53</div>
+              <div class="stat-card__label">Average order value</div>
+            </article>
+          </div>
+
+          <div class="analytics-layout">
+            <article class="card">
+              <div class="card__header">
+                <div>
+                  <h2 class="card__title">Revenue trend</h2>
+                  <p class="card__subtitle">Daily revenue over the last 30 days</p>
+                </div>
+                <span class="badge badge--success">+12.4%</span>
+              </div>
+
+              <div class="card__body">
+                <div class="line-chart">
+                  <div class="line-chart__column"><span class="line-chart__fill" style="height: 38%;"></span></div>
+                  <div class="line-chart__column"><span class="line-chart__fill" style="height: 44%;"></span></div>
+                  <div class="line-chart__column"><span class="line-chart__fill" style="height: 42%;"></span></div>
+                  <div class="line-chart__column"><span class="line-chart__fill" style="height: 51%;"></span></div>
+                  <div class="line-chart__column"><span class="line-chart__fill" style="height: 49%;"></span></div>
+                  <div class="line-chart__column"><span class="line-chart__fill" style="height: 57%;"></span></div>
+                  <div class="line-chart__column"><span class="line-chart__fill" style="height: 55%;"></span></div>
+                  <div class="line-chart__column"><span class="line-chart__fill" style="height: 63%;"></span></div>
+                  <div class="line-chart__column"><span class="line-chart__fill" style="height: 59%;"></span></div>
+                  <div class="line-chart__column"><span class="line-chart__fill" style="height: 68%;"></span></div>
+                  <div class="line-chart__column"><span class="line-chart__fill" style="height: 72%;"></span></div>
+                  <div class="line-chart__column"><span class="line-chart__fill" style="height: 69%;"></span></div>
+                  <div class="line-chart__column"><span class="line-chart__fill" style="height: 76%;"></span></div>
+                  <div class="line-chart__column"><span class="line-chart__fill" style="height: 81%;"></span></div>
+                  <div class="line-chart__column"><span class="line-chart__fill" style="height: 78%;"></span></div>
+                  <div class="line-chart__column"><span class="line-chart__fill" style="height: 86%;"></span></div>
+                  <div class="line-chart__column"><span class="line-chart__fill" style="height: 82%;"></span></div>
+                  <div class="line-chart__column"><span class="line-chart__fill" style="height: 91%;"></span></div>
+                </div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="card__header">
+                <div>
+                  <h2 class="card__title">Acquisition channels</h2>
+                  <p class="card__subtitle">Share of converted visitors</p>
+                </div>
+              </div>
+
+              <div class="card__body channel-list">
+                <div class="channel">
+                  <div class="channel__name">Organic</div>
+                  <div class="channel__bar"><span style="width: 82%;"></span></div>
+                  <div class="channel__value">41%</div>
+                </div>
+
+                <div class="channel">
+                  <div class="channel__name">Paid search</div>
+                  <div class="channel__bar"><span style="width: 64%;"></span></div>
+                  <div class="channel__value">28%</div>
+                </div>
+
+                <div class="channel">
+                  <div class="channel__name">Direct</div>
+                  <div class="channel__bar"><span style="width: 47%;"></span></div>
+                  <div class="channel__value">18%</div>
+                </div>
+
+                <div class="channel">
+                  <div class="channel__name">Referral</div>
+                  <div class="channel__bar"><span style="width: 31%;"></span></div>
+                  <div class="channel__value">9%</div>
+                </div>
+
+                <div class="channel">
+                  <div class="channel__name">Social</div>
+                  <div class="channel__bar"><span style="width: 18%;"></span></div>
+                  <div class="channel__value">4%</div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <article class="card table-card">
+            <div class="card__header">
+              <div>
+                <h2 class="card__title">Top performing products</h2>
+                <p class="card__subtitle">Products ranked by revenue contribution</p>
+              </div>
+            </div>
+
+            <div class="table-scroll">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Sales</th>
+                    <th>Orders</th>
+                    <th>Conversion</th>
+                    <th>Revenue</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>NexaDesk Pro</td>
+                    <td>482</td>
+                    <td>441</td>
+                    <td>7.8%</td>
+                    <td class="money">$32,884</td>
+                  </tr>
+                  <tr>
+                    <td>Automation Pack</td>
+                    <td>318</td>
+                    <td>304</td>
+                    <td>6.4%</td>
+                    <td class="money">$21,426</td>
+                  </tr>
+                  <tr>
+                    <td>Priority Support</td>
+                    <td>241</td>
+                    <td>226</td>
+                    <td>5.9%</td>
+                    <td class="money">$14,820</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+        </main>
+
+        <footer class="footer" data-component="Footer">
+          <span>© 2026 NexaFlow. All rights reserved.</span>
+          <span>Secure workspace · System operational</span>
+        </footer>
+      </div>
+    </section>
+
+    <section data-screen="settings" data-title="Settings">
+      <aside class="sidebar" data-component="Sidebar">
+        <div class="sidebar__brand">
+          <div class="sidebar__logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" color="white">
+              <path d="M5 17L10 12L13 15L19 8"/>
+              <path d="M15 8H19V12"/>
+            </svg>
+          </div>
+          <div class="sidebar__brand-text">
+            <span class="sidebar__brand-name">NexaFlow</span>
+            <span class="sidebar__brand-subtitle">Business OS</span>
+          </div>
+        </div>
+
+        <div class="sidebar__label">Workspace</div>
+
+        <nav class="sidebar__nav">
+          <a class="nav-item" href="#dashboard" data-goto="dashboard">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="3" y="3" width="7" height="7" rx="2"/>
+              <rect x="14" y="3" width="7" height="7" rx="2"/>
+              <rect x="3" y="14" width="7" height="7" rx="2"/>
+              <rect x="14" y="14" width="7" height="7" rx="2"/>
+            </svg>
+            Dashboard
+          </a>
+
+          <a class="nav-item" href="#orders" data-goto="orders">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M6 7V5a3 3 0 0 1 6 0v2"/>
+              <path d="M3 7h18l-1 14H4L3 7Z"/>
+              <path d="M12 7V5a3 3 0 0 1 6 0v2"/>
+            </svg>
+            Orders
+          </a>
+
+          <a class="nav-item" href="#customers" data-goto="customers">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="9" cy="8" r="3"/>
+              <path d="M3 20v-2a6 6 0 0 1 12 0v2"/>
+              <circle cx="18" cy="9" r="2"/>
+              <path d="M17 15a5 5 0 0 1 4 5"/>
+            </svg>
+            Customers
+          </a>
+
+          <a class="nav-item" href="#analytics" data-goto="analytics">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M4 20V10"/>
+              <path d="M10 20V4"/>
+              <path d="M16 20v-7"/>
+              <path d="M22 20H2"/>
+            </svg>
+            Analytics
+          </a>
+
+          <a class="nav-item is-active" href="#settings" data-goto="settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/>
+            </svg>
+            Settings
+          </a>
+        </nav>
+
+        <div class="sidebar__spacer"></div>
+
+        <div class="sidebar__upgrade">
+          <div class="sidebar__upgrade-title">NexaFlow Pro</div>
+          <p class="sidebar__upgrade-copy">Unlock advanced analytics, automations and team permissions.</p>
+          <a class="sidebar__upgrade-link" href="#settings" data-goto="settings">
+            View plans
+            <span>→</span>
+          </a>
+        </div>
+
+        <div class="sidebar__user">
+          <div class="avatar">LM</div>
+          <div>
+            <div class="sidebar__user-name">Liam Morgan</div>
+            <div class="sidebar__user-role">Administrator</div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="app">
+        <header class="topbar" data-component="Topbar">
+          <div class="topbar__search">
+            <label for="settings-search">Search</label>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="7"/>
+              <path d="m20 20-3.5-3.5"/>
+            </svg>
+            <input id="settings-search" type="search" placeholder="Search orders, customers, reports...">
+          </div>
+
+          <div class="topbar__actions">
+            <button class="icon-button" type="button" aria-label="Notifications">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                <path d="M10 21h4"/>
+              </svg>
+            </button>
+
+            <div class="topbar__profile">
+              <div class="avatar">LM</div>
+              <div class="topbar__profile-copy">
+                <div class="topbar__profile-name">Liam Morgan</div>
+                <div class="topbar__profile-role">Admin</div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="content">
+          <div class="page-heading">
+            <div>
+              <div class="page-heading__eyebrow">Workspace</div>
+              <h1>Settings</h1>
+              <p>Manage your account, business information and preferences.</p>
+            </div>
+          </div>
+
+          <div class="settings-layout">
+            <nav class="card settings-nav">
+              <a class="settings-nav__item is-active" href="#settings" data-goto="settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <circle cx="12" cy="8" r="3"/>
+                  <path d="M5 21v-2a7 7 0 0 1 14 0v2"/>
+                </svg>
+                Profile
+              </a>
+
+              <a class="settings-nav__item" href="#settings" data-goto="settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <rect x="4" y="5" width="16" height="14" rx="2"/>
+                  <path d="M8 9h8"/>
+                  <path d="M8 13h5"/>
+                </svg>
+                Business
+              </a>
+
+              <a class="settings-nav__item" href="#settings" data-goto="settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M4 7h16"/>
+                  <path d="M4 12h16"/>
+                  <path d="M4 17h16"/>
+                </svg>
+                Preferences
+              </a>
+
+              <a class="settings-nav__item" href="#settings" data-goto="settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <rect x="5" y="10" width="14" height="10" rx="2"/>
+                  <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                </svg>
+                Security
+              </a>
+            </nav>
+
+            <form class="card settings-form">
+              <section class="settings-form__section">
+                <div class="settings-form__heading">
+                  <h2>Personal information</h2>
+                  <p>Update the personal details associated with your administrator account.</p>
+                </div>
+
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="first-name">First name</label>
+                    <input id="first-name" type="text" value="Liam">
+                  </div>
+
+                  <div class="field">
+                    <label for="last-name">Last name</label>
+                    <input id="last-name" type="text" value="Morgan">
+                  </div>
+
+                  <div class="field">
+                    <label for="email">Email address</label>
+                    <input id="email" type="email" value="liam@nexaflow.app">
+                  </div>
+
+                  <div class="field">
+                    <label for="phone">Phone number</label>
+                    <input id="phone" type="tel" value="+1 415 555 0168">
+                  </div>
+                </div>
+              </section>
+
+              <section class="settings-form__section">
+                <div class="settings-form__heading">
+                  <h2>Business information</h2>
+                  <p>Used across invoices, reports and customer communication.</p>
+                </div>
+
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="business-name">Business name</label>
+                    <input id="business-name" type="text" value="NexaFlow Inc.">
+                  </div>
+
+                  <div class="field">
+                    <label for="timezone">Timezone</label>
+                    <select id="timezone">
+                      <option>Europe/Paris</option>
+                      <option>America/New_York</option>
+                      <option>America/Los_Angeles</option>
+                      <option>Asia/Dubai</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label for="currency">Default currency</label>
+                    <select id="currency">
+                      <option>USD — US Dollar</option>
+                      <option>EUR — Euro</option>
+                      <option>AED — UAE Dirham</option>
+                    </select>
+                  </div>
+
+                  <div class="field">
+                    <label for="language">Language</label>
+                    <select id="language">
+                      <option>English</option>
+                      <option>German</option>
+                      <option>Arabic</option>
+                    </select>
+                  </div>
+
+                  <div class="field field--full">
+                    <label for="address">Business address</label>
+                    <textarea id="address">145 Market Street, Suite 410
+San Francisco, CA 94105
+United States</textarea>
+                  </div>
+                </div>
+              </section>
+
+              <div class="form-actions">
+                <button class="btn btn--secondary" type="reset">Cancel</button>
+                <button class="btn btn--primary" type="submit">Save changes</button>
+              </div>
+            </form>
+          </div>
+        </main>
+
+        <footer class="footer" data-component="Footer">
+          <span>© 2026 NexaFlow. All rights reserved.</span>
+          <span>Secure workspace · System operational</span>
+        </footer>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

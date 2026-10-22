@@ -1,0 +1,38 @@
+{
+  "name": "flow2repo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Turn dashboards and websites designed with AI into clean React + TypeScript projects.",
+  "license": "MIT",
+  "author": "MHD Laith ALAllaf (https://laithalallaf.com)",
+  "homepage": "https://flow2repo.laithalallaf.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/laithalallaf2000-ux/flow2repo.git"
+  },
+  "bugs": "https://github.com/laithalallaf2000-ux/flow2repo/issues",
+  "keywords": [
+    "react",
+    "typescript",
+    "html-to-react",
+    "design-to-code",
+    "ai",
+    "vite",
+    "converter"
+  ],
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @flow2repo/web",
+    "build": "npm run build -w @flow2repo/web",
+    "test": "npm test -w @flow2repo/converter",
+    "test:e2e": "npm run test:e2e -w @flow2repo/converter",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "devDependencies": {
+    "playwright": "^1.64.1"
+  }
+}
